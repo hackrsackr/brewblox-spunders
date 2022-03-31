@@ -1,3 +1,8 @@
+#include "secrets.h"
+
+#define _SSID SECRET_SSID
+#define _PASS SECRET_PASS
+
 // Brewblox IP address
 #define _MQTTHOST "192.168.1.2"
 #define _MQTTPORT 1883

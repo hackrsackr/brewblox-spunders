@@ -34,7 +34,9 @@ public:
   float get_psi_setpoint();   // Compute psi setpoint from tempC and vols_setpoint
   float get_vols();           // Compute volumes CO2 from tempC and psi_value
   float test_carb();          // Test if psi_value is greater than psi_setpoint, vent if neccessary
-  float convert_temp();       // Convert temp C to F 
+  float convert_temp();       // Convert temp C to F
+
+  void spunder_run(); 
 };  
 
 int Spunder::get_adc() 
@@ -101,4 +103,13 @@ float Spunder::convert_temp()
   tempF = tempC * 1.8 + 32;
 
   return tempF;
+}
+
+void Spunder::spunder_run()
+{
+  tempF           = convert_temp();
+  psi_value       = get_psi_value();
+  psi_setpoint    = get_psi_setpoint();
+  vols_value      = get_vols();
+  time_since_vent = test_carb();
 }

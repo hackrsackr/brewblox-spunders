@@ -1,10 +1,7 @@
-#include <Arduino.h>
 #include <Arduino_JSON.h>
 #include <EspMQTTClient.h>
 #include <Esp32HTTPUpdateServer.h>
-#include <math.h>
 
-#include "secrets.hpp"
 #include "spund_config.hpp"
 #include "spunder.hpp"
 
@@ -27,6 +24,8 @@ String MQTT_TEMP_FIELDS[NUMBER_OF_SPUNDERS]  = { _TEMP1, _TEMP2, _TEMP3, _TEMP4 
 // From spund_config.h
 EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
 
+void onConnectionEstablished(void);
+
 void setup()
 {
   Serial.begin(115200);
@@ -34,6 +33,7 @@ void setup()
   ads.setGain(GAIN_ONE);
   client.enableHTTPWebUpdater();
   client.setMaxPacketSize(4096);
+  client.enableOTA();
   //client.enableDebuggingMessages();
 
   WiFi.begin(_SSID, _PASS);
@@ -71,8 +71,8 @@ void onConnectionEstablished()
 {
   client.subscribe(_SUBTOPIC, [](const String &payload)
   {
-    JSONVar data, message; 
-
+    JSONVar data;
+    JSONVar message;
     // Get the JSON data of the sub_topic
     parsed_data = JSON.parse(payload);
     if (JSON.typeof(parsed_data) == "undefined") 
@@ -84,22 +84,16 @@ void onConnectionEstablished()
     // Read each spunder in the array
     for (int spunder = 0; spunder < NUMBER_OF_SPUNDERS; spunder++)
     {
-      // Parse message from _MQTTHOST to get temperature value needed 
+      // Parse message from _MQTTHOST to get temperature value needed
       float raw_temp = JSON.stringify(parsed_data["data"][spund_arr[spunder].mqtt_field]["value[degC]"]).toFloat();
-      
-      //Serial.println(raw_temp);
-      // Filter outliers
-      if (spund_arr[spunder].tempC - raw_temp < .5)
-      {spund_arr[spunder].tempC = raw_temp; }
-      
-      // Get data values, test carb, vent if neccessary
-      spund_arr[spunder].tempF           = spund_arr[spunder].convert_temp();
-      spund_arr[spunder].psi_value       = spund_arr[spunder].get_psi_value();
-      spund_arr[spunder].psi_setpoint    = spund_arr[spunder].get_psi_setpoint();
-      spund_arr[spunder].vols_value      = spund_arr[spunder].get_vols();
-      spund_arr[spunder].time_since_vent = spund_arr[spunder].test_carb();
 
-      // Populate data message    
+      //  Filter outliers
+      if (spund_arr[spunder].tempC - raw_temp < .5) { spund_arr[spunder].tempC = raw_temp; }
+
+      // Read PSI. Use psi and temp to do calculations, then test carb, vent if neccesarry
+      spund_arr[spunder].spunder_run();           
+
+      // Populate data message
       data[spund_arr[spunder].name]["volts"]        = spund_arr[spunder].volts;
       data[spund_arr[spunder].name]["tempC"]        = spund_arr[spunder].tempC;
       data[spund_arr[spunder].name]["psi_setpoint"] = spund_arr[spunder].psi_setpoint;
@@ -109,13 +103,13 @@ void onConnectionEstablished()
       data[spund_arr[spunder].name]["since_vent"]   = spund_arr[spunder].time_since_vent;
     }
 
-    Serial.println(JSON.stringify(data));
-    Serial.println("");
+  Serial.println(JSON.stringify(data));
+  Serial.println("");
 
-    message["key"] = "spunders";
-    message["data"] = data;
+  message["key"] = "spunders";
+  message["data"] = data;
 
-    client.publish(_PUBTOPIC, JSON.stringify(message));
+  client.publish(_PUBTOPIC, JSON.stringify(message));
   });
 
   delay(5000);
