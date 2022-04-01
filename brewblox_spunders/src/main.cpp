@@ -8,11 +8,6 @@
 #define NUMBER_OF_SPUNDERS 4
 #define RELAY_OPEN HIGH
 
-// Create array of Spunders
-Spunder spund_arr[NUMBER_OF_SPUNDERS];
-
-JSONVar parsed_data; 
-
 // From spund_config.h
 const int UNIT_MAXS[NUMBER_OF_SPUNDERS]      = { _UMAX1, _UMAX2, _UMAX3, _UMAX4 };
 const int RELAY_PINS[NUMBER_OF_SPUNDERS]     = { _RPIN1, _RPIN2, _RPIN3, _RPIN4 };
@@ -24,7 +19,15 @@ String MQTT_TEMP_FIELDS[NUMBER_OF_SPUNDERS]  = { _TEMP1, _TEMP2, _TEMP3, _TEMP4 
 // From spund_config.h
 EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
 
+// Create array of Spunders
+Spunder spund_arr[NUMBER_OF_SPUNDERS];
+
+// Json object to hold the payload from client.suscribe
+JSONVar parsed_data; 
+
+// Client run function
 void onConnectionEstablished(void);
+
 
 void setup()
 {
@@ -71,8 +74,7 @@ void onConnectionEstablished()
 {
   client.subscribe(_SUBTOPIC, [](const String &payload)
   {
-    JSONVar data;
-    JSONVar message;
+    
     // Get the JSON data of the sub_topic
     parsed_data = JSON.parse(payload);
     if (JSON.typeof(parsed_data) == "undefined") 
@@ -80,6 +82,9 @@ void onConnectionEstablished()
       Serial.println("Parsing input failed!");
       return;
     }
+    
+    JSONVar data;
+    JSONVar message;
 
     // Read each spunder in the array
     for (int spunder = 0; spunder < NUMBER_OF_SPUNDERS; spunder++)
