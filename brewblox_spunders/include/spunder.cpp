@@ -8,8 +8,8 @@
 #include "spund_config.hpp"
 #include "spunder.hpp"
 
+// Not from config
 #define NUMBER_OF_SPUNDERS 1
-#define RELAY_OPEN HIGH
 
 Spunder s;
 
@@ -51,7 +51,7 @@ void setup()
 
   //Serial.println(s.tempC);
   pinMode(s.relay_pin, OUTPUT);
-  digitalWrite(s.relay_pin, !RELAY_OPEN);
+  digitalWrite(s.relay_pin, !_RELAY_OPEN);
 }
 
 void onConnectionEstablished()
@@ -79,8 +79,8 @@ void onConnectionEstablished()
     // Serial.println(s.tempC);
     // Get data values
     s.tempF           = s.convert_temp();
-    //s.adc             = s.get_adc();
-    //s.volts           = s.get_volts();
+    s.adc             = s.get_adc();
+    s.volts           = s.get_volts();
     s.psi_value       = s.get_psi_value();
     s.psi_setpoint    = s.get_psi_setpoint();
     s.vols_value      = s.get_vols();
@@ -99,7 +99,7 @@ void onConnectionEstablished()
     //Serial.println(JSON.stringify(data));
     //Serial.println("");
 
-    message["key"] = "spunders";
+    message["key"]  = "spunders";
     message["data"] = data;
 
     client.publish(_PUBTOPIC, JSON.stringify(message));

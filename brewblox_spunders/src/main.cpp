@@ -5,29 +5,17 @@
 #include "spund_config.hpp"
 #include "spunder.hpp"
 
-#define NUMBER_OF_SPUNDERS 4
-#define RELAY_OPEN HIGH
-
-// From spund_config.h
-const int UNIT_MAXS[NUMBER_OF_SPUNDERS]      = { _UMAX1, _UMAX2, _UMAX3, _UMAX4 };
-const int RELAY_PINS[NUMBER_OF_SPUNDERS]     = { _RPIN1, _RPIN2, _RPIN3, _RPIN4 };
-float DESIRED_VOLS[NUMBER_OF_SPUNDERS]       = { _VOLS1, _VOLS2, _VOLS3, _VOLS4 };
-float OFFSETS[NUMBER_OF_SPUNDERS]            = { _OFFS1, _OFFS2, _OFFS3, _OFFS4 };
-String SPUNDER_NAMES[NUMBER_OF_SPUNDERS]     = { _NAME1, _NAME2, _NAME3, _NAME4 };
-String MQTT_TEMP_FIELDS[NUMBER_OF_SPUNDERS]  = { _TEMP1, _TEMP2, _TEMP3, _TEMP4 };
-
 // From spund_config.h
 EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
 
 // Create array of Spunders
-Spunder spund_arr[NUMBER_OF_SPUNDERS];
+Spunder spund_arr[_NUMBER_OF_SPUNDERS];
 
 // Json object to hold the payload from client.suscribe
 JSONVar parsed_data; 
 
 // Client run function
 void onConnectionEstablished(void);
-
 
 void setup()
 {
@@ -53,7 +41,7 @@ void setup()
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
-  for (int spunder = 0; spunder < NUMBER_OF_SPUNDERS; spunder++)
+  for (int spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
   {
     spund_arr[spunder].name          = SPUNDER_NAMES[spunder];
     spund_arr[spunder].mqtt_field    = MQTT_TEMP_FIELDS[spunder];
@@ -66,7 +54,7 @@ void setup()
     spund_arr[spunder].tempC         = JSON.stringify(parsed_data["data"][spund_arr[spunder].mqtt_field]["value[degC]"]).toFloat();
 
     pinMode(spund_arr[spunder].relay_pin, OUTPUT);
-    digitalWrite(spund_arr[spunder].relay_pin, !RELAY_OPEN);
+    digitalWrite(spund_arr[spunder].relay_pin, !_RELAY_OPEN);
   }
 }
 
@@ -88,7 +76,7 @@ void onConnectionEstablished()
     JSONVar message;
 
     // Read each spunder in the array
-    for (int spunder = 0; spunder < NUMBER_OF_SPUNDERS; spunder++)
+    for (int spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
     {
       // Parse message from _MQTTHOST to get temperature value needed
       float new_temp = JSON.stringify(parsed_data["data"][spund_arr[spunder].mqtt_field]["value[degC]"]).toFloat();
@@ -109,7 +97,7 @@ void onConnectionEstablished()
       data[spund_arr[spunder].name]["since_vent"]   = spund_arr[spunder].time_since_vent;
     }
 
-  message["key"] = "spunders";
+  message["key"]  = "spunders";
   message["data"] = data;
   
   client.publish(_PUBTOPIC, JSON.stringify(message));
