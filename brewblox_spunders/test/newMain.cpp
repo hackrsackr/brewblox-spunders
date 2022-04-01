@@ -3,7 +3,7 @@
 #include <Esp32HTTPUpdateServer.h>
 
 #include "spund_config.hpp"
-#include "spunder.hpp"
+#include "spunder_copy.hpp"
 
 #define NUMBER_OF_SPUNDERS 4
 #define RELAY_OPEN HIGH
@@ -14,12 +14,12 @@ Spunder spund_arr[NUMBER_OF_SPUNDERS];
 JSONVar parsed_data; 
 
 // From spund_config.h
-const int UNIT_MAXS[NUMBER_OF_SPUNDERS]      = { _UMAX1, _UMAX2, _UMAX3, _UMAX4 };
-const int RELAY_PINS[NUMBER_OF_SPUNDERS]     = { _RPIN1, _RPIN2, _RPIN3, _RPIN4 };
-float DESIRED_VOLS[NUMBER_OF_SPUNDERS]       = { _VOLS1, _VOLS2, _VOLS3, _VOLS4 };
-float OFFSETS[NUMBER_OF_SPUNDERS]            = { _OFFS1, _OFFS2, _OFFS3, _OFFS4 };
-String SPUNDER_NAMES[NUMBER_OF_SPUNDERS]     = { _NAME1, _NAME2, _NAME3, _NAME4 };
-String MQTT_TEMP_FIELDS[NUMBER_OF_SPUNDERS]  = { _TEMP1, _TEMP2, _TEMP3, _TEMP4 };
+const uint8_t UNIT_MAXS[NUMBER_OF_SPUNDERS]   = { _UMAX1, _UMAX2, _UMAX3, _UMAX4 };
+const uint8_t RELAY_PINS[NUMBER_OF_SPUNDERS]  = { _RPIN1, _RPIN2, _RPIN3, _RPIN4 };
+float DESIRED_VOLS[NUMBER_OF_SPUNDERS]        = { _VOLS1, _VOLS2, _VOLS3, _VOLS4 };
+float OFFSETS[NUMBER_OF_SPUNDERS]             = { _OFFS1, _OFFS2, _OFFS3, _OFFS4 };
+String SPUNDER_NAMES[NUMBER_OF_SPUNDERS]      = { _NAME1, _NAME2, _NAME3, _NAME4 };
+String MQTT_TEMP_FIELDS[NUMBER_OF_SPUNDERS]   = { _TEMP1, _TEMP2, _TEMP3, _TEMP4 };
 
 // From spund_config.h
 EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
@@ -50,7 +50,7 @@ void setup()
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
-  for (int spunder = 0; spunder < NUMBER_OF_SPUNDERS; spunder++)
+  for (size_t spunder = 0; spunder < NUMBER_OF_SPUNDERS; spunder++)
   {
     spund_arr[spunder].name          = SPUNDER_NAMES[spunder];
     spund_arr[spunder].mqtt_field    = MQTT_TEMP_FIELDS[spunder];

@@ -33,7 +33,7 @@ void setup()
 {
   Serial.begin(115200);
   ads.begin(0x48);
-  ads.setGain(GAIN_ONE);
+  ads.setGain(GAIN_TWOTHIRDS);
   client.enableHTTPWebUpdater();
   client.setMaxPacketSize(4096);
   client.enableOTA();

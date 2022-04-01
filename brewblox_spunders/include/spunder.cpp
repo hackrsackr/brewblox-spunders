@@ -4,7 +4,7 @@
 #include <Esp32HTTPUpdateServer.h>
 #include <math.h>
 
-#include "secrets.hpp"
+#include "secrets.h"
 #include "spund_config.hpp"
 #include "spunder.hpp"
 
