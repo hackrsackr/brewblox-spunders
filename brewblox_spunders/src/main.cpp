@@ -9,7 +9,8 @@
 EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
 
 // Create array of Spunders
-Spunder spund_arr[_NUMBER_OF_SPUNDERS];
+std::array<Spunder, _NUMBER_OF_SPUNDERS> spund_arr;
+
 
 // Json object to hold the payload from client.suscribe
 JSONVar parsed_data; 
@@ -44,7 +45,7 @@ void setup()
   for (int spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
   {
     spund_arr[spunder].name          = SPUNDER_NAMES[spunder];
-    spund_arr[spunder].mqtt_field    = MQTT_TEMP_FIELDS[spunder];
+    spund_arr[spunder].mqtt_field    = MQTT_FIELDS[spunder];
     spund_arr[spunder].relay_pin     = RELAY_PINS[spunder];
     spund_arr[spunder].unit_max      = UNIT_MAXS[spunder];
     spund_arr[spunder].vols_setpoint = DESIRED_VOLS[spunder];
@@ -62,19 +63,12 @@ void onConnectionEstablished()
 {
   client.subscribe(_SUBTOPIC, [](const String &payload)
   {
+    JSONVar data;
+    JSONVar message; 
     
     // Get the JSON data of the sub_topic
     parsed_data = JSON.parse(payload);
     
-    if (JSON.typeof(parsed_data) == "undefined") 
-    {
-      Serial.println("Parsing input failed!");
-      return;
-    }
-    
-    JSONVar data;
-    JSONVar message;
-
     // Read each spunder in the array
     for (int spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
     {
@@ -101,9 +95,8 @@ void onConnectionEstablished()
   message["data"] = data;
   
   client.publish(_PUBTOPIC, JSON.stringify(message));
-  });
-
   delay(5000);
+  });
 }
 
 void loop()

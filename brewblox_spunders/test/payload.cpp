@@ -1,3 +1,6 @@
+#include <iostream>
+#include <array>
+
 #include <Arduino_JSON.h>
 #include <EspMQTTClient.h>
 #include <Esp32HTTPUpdateServer.h>
@@ -8,8 +11,9 @@
 #define NUMBER_OF_SPUNDERS 4
 #define RELAY_OPEN HIGH
 
+std::array<Spunder, NUMBER_OF_SPUNDERS> spund_arr;
 // Create array of Spunders
-Spunder spund_arr[NUMBER_OF_SPUNDERS];
+//Spunder spund_arr[NUMBER_OF_SPUNDERS];
 
 JSONVar parsed_data; 
 

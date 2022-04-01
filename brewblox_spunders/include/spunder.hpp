@@ -36,7 +36,7 @@ public:
   float test_carb();          // Test if psi_value is greater than psi_setpoint, vent if neccessary
   float convert_temp();       // Convert temp C to F
 
-  void spunder_run(); 
+  void spunder_run();         // Get temp, psi, check carb, vent if neccessary
 };  
 
 int Spunder::get_adc() 
