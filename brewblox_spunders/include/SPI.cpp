@@ -48,7 +48,7 @@ void SPIClass::begin(int8_t sck, int8_t miso, int8_t mosi, int8_t ss)
     if(!_spi) {
         return;
     }
-
+    // had to change ternary operators to lowercase
     if(sck == -1 && miso == -1 && mosi == -1 && ss == -1) {
         _sck = (_spi_num == VSPI) ? sck : 14;
         _miso = (_spi_num == VSPI) ? miso : 12;
