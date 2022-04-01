@@ -11,9 +11,8 @@
 #define NUMBER_OF_SPUNDERS 4
 #define RELAY_OPEN HIGH
 
-std::array<Spunder, NUMBER_OF_SPUNDERS> spund_arr;
 // Create array of Spunders
-//Spunder spund_arr[NUMBER_OF_SPUNDERS];
+std::array<Spunder, NUMBER_OF_SPUNDERS> spund_arr;
 
 JSONVar parsed_data; 
 
@@ -25,11 +24,7 @@ void onConnectionEstablished(void);
 void setup()
 {
   Serial.begin(115200);
-  ads.begin(0x48);
-  ads.setGain(GAIN_ONE);
-  client.enableHTTPWebUpdater();
   client.setMaxPacketSize(4096);
-  client.enableOTA();
   //client.enableDebuggingMessages();
 
   WiFi.begin(_SSID, _PASS);

@@ -6,11 +6,11 @@
 #include "spunder.hpp"
 
 // From spund_config.h
+// Create a MQTT client
 EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
 
 // Create array of Spunders
 std::array<Spunder, _NUMBER_OF_SPUNDERS> spund_arr;
-
 
 // Json object to hold the payload from client.suscribe
 JSONVar parsed_data; 
@@ -22,7 +22,7 @@ void setup()
 {
   Serial.begin(115200);
   ads.begin(0x48);
-  ads.setGain(GAIN_TWOTHIRDS);
+  ads.setGain(GAIN_ONE);
   client.enableHTTPWebUpdater();
   client.setMaxPacketSize(4096);
   client.enableOTA();
