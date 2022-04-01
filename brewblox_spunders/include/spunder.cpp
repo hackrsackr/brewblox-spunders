@@ -58,6 +58,7 @@ void onConnectionEstablished()
 {
   client.subscribe(_SUBTOPIC, [](const String &payload)
   {
+    //Serial.println(payload.length());
     JSONVar data, message; 
 
     // Get the JSON data of the sub_topic
@@ -86,13 +87,11 @@ void onConnectionEstablished()
     s.time_since_vent = s.test_carb();
 
     // Populate data message    
-    //data[s.name]["adc"]          = s.adc;
+    data[s.name]["adc"]          = s.adc;
     data[s.name]["volts"]        = s.volts;
     data[s.name]["tempC"]        = s.tempC;
     data[s.name]["psi_setpoint"] = s.psi_setpoint;
     data[s.name]["psi"]          = s.psi_value;
-    data[s.name]["bar_setpoint"] = s.bar_setpoint;
-    data[s.name]["bar"]          = s.bar_value;
     data[s.name]["vols_target"]  = s.vols_setpoint;
     data[s.name]["volumes[co2]"] = s.vols_value;
     data[s.name]["since_vent"]   = s.time_since_vent;
@@ -106,6 +105,10 @@ void onConnectionEstablished()
     client.publish(_PUBTOPIC, JSON.stringify(message));
   });
 
+  //Serial.println(data);
+  //Serial.println(data.length());
+  //Serial.println(message.length());
+  //Serial.println("");
   delay(5000);
 }
 

@@ -77,6 +77,7 @@ void onConnectionEstablished()
     
     // Get the JSON data of the sub_topic
     parsed_data = JSON.parse(payload);
+    
     if (JSON.typeof(parsed_data) == "undefined") 
     {
       Serial.println("Parsing input failed!");
@@ -90,10 +91,10 @@ void onConnectionEstablished()
     for (int spunder = 0; spunder < NUMBER_OF_SPUNDERS; spunder++)
     {
       // Parse message from _MQTTHOST to get temperature value needed
-      float raw_temp = JSON.stringify(parsed_data["data"][spund_arr[spunder].mqtt_field]["value[degC]"]).toFloat();
+      float new_temp = JSON.stringify(parsed_data["data"][spund_arr[spunder].mqtt_field]["value[degC]"]).toFloat();
 
       //  Filter outliers
-      if (spund_arr[spunder].tempC - raw_temp < .5) { spund_arr[spunder].tempC = raw_temp; }
+      if ((spund_arr[spunder].tempC - new_temp) < .3) { spund_arr[spunder].tempC = new_temp; }
 
       // Read PSI. Use psi and temp to do calculations, then test carb, vent if neccesarry
       spund_arr[spunder].spunder_run();           
@@ -108,12 +109,9 @@ void onConnectionEstablished()
       data[spund_arr[spunder].name]["since_vent"]   = spund_arr[spunder].time_since_vent;
     }
 
-  Serial.println(JSON.stringify(data));
-  Serial.println("");
-
   message["key"] = "spunders";
   message["data"] = data;
-
+  
   client.publish(_PUBTOPIC, JSON.stringify(message));
   });
 
