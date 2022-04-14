@@ -69,7 +69,7 @@ void onConnectionEstablished()
     // Get the JSON data of the sub_topic
     parsed_data = JSON.parse(payload);
     
-    // Read each spunder in the array
+    // Read each spunder in the array of spunders
     for (int spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
     {
       // Parse message from _MQTTHOST to get temperature value needed
