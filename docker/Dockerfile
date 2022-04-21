@@ -22,7 +22,7 @@ ENV SERVICE_INFO=${service_info}
 COPY --from=base /wheeley /wheeley
 
 RUN set -ex \
-    && pip3 install --no-index --find-links=/wheeley brewblox-meters \
+    && pip3 install --no-index --find-links=/wheeley brewblox-spunders \
     && rm -rf /wheeley \
     && pip3 freeze
 
