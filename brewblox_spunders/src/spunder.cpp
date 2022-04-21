@@ -78,36 +78,46 @@ void onConnectionEstablished()
 }
 void publishData()
 {
-    JSONVar data;
-    JSONVar message;
+    if (client.isConnected()){
+        // Dictionaries to hold spunder data
+        JSONVar data;
+        JSONVar message;
 
-    // Read each spunder in the array of spunders
-    for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
-    {
-      // Parse message from _MQTTHOST to get temperature value needed
-      float new_temp = JSON.stringify(parsed_data["data"][spund_arr[spunder].mqtt_field]["value[degC]"]).toFloat();
+        // Read each spunder in the array of spunders
+        for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
+        {
+            // Parse message from _MQTTHOST to get temperature value needed
+            //float new_temp = JSON.stringify(parsed_data["data"][spund_arr[spunder].mqtt_field]["value[degC]"]).toFloat();
+            spund_arr[spunder].tempC = JSON.stringify(parsed_data["data"][spund_arr[spunder].mqtt_field]["value[degC]"]).toFloat();
+            //spund_arr[spunder].convert_temp();
+            spund_arr[spunder].spunder_run();
 
-      //  Filter outliers
-      if ((spund_arr[spunder].tempC - new_temp) < .3) { spund_arr[spunder].tempC = new_temp; }
+            //  Filter outliers
+            //if ((spund_arr[spunder].tempC - new_temp) < .3) { spund_arr[spunder].tempC = new_temp; }
 
-      spund_arr[spunder].spunder_run();
+            // Convert analog reading and temp into psi_setpoint, psi_value, and current vols_value
+            spund_arr[spunder].get_psi_setpoint();
+            spund_arr[spunder].get_psi_value();
+            spund_arr[spunder].get_vols();
+            spund_arr[spunder].test_carb();
 
-      // Populate data message
-      data[spund_arr[spunder].name]["volts"]        = spund_arr[spunder].volts;
-      data[spund_arr[spunder].name]["tempC"]        = spund_arr[spunder].tempC;
-      data[spund_arr[spunder].name]["psi_setpoint"] = spund_arr[spunder].psi_setpoint;
-      data[spund_arr[spunder].name]["psi"]          = spund_arr[spunder].psi_value;
-      data[spund_arr[spunder].name]["vols_target"]  = spund_arr[spunder].vols_setpoint;
-      data[spund_arr[spunder].name]["volumes[co2]"] = spund_arr[spunder].vols_value;
-      data[spund_arr[spunder].name]["since_vent"]   = spund_arr[spunder].time_since_vent;
+            // Populate data message to publish to brewblox
+            data[spund_arr[spunder].name]["volts"]        = spund_arr[spunder].volts;
+            data[spund_arr[spunder].name]["tempC"]        = spund_arr[spunder].tempC;
+            data[spund_arr[spunder].name]["psi_setpoint"] = spund_arr[spunder].psi_setpoint;
+            data[spund_arr[spunder].name]["psi"]          = spund_arr[spunder].psi_value;
+            data[spund_arr[spunder].name]["vols_target"]  = spund_arr[spunder].vols_setpoint;
+            data[spund_arr[spunder].name]["volumes[co2]"] = spund_arr[spunder].vols_value;
+            data[spund_arr[spunder].name]["since_vent"]   = spund_arr[spunder].time_since_vent;
+        }
+
+        // Format output into brewblox spec and publish
+        message["key"]  = "spunders";
+        message["data"] = data;
+
+        client.publish(_PUBTOPIC, JSON.stringify(message));
+        delay(5000);
     }
-
-  Serial.println(data);
-  message["key"]  = "spunders";
-  message["data"] = data;
-
-  client.publish(_PUBTOPIC, JSON.stringify(message));
-  delay(5000);
 }
 
 void loop()

@@ -65,6 +65,7 @@ float Spunder::get_psi_value()
 
 float Spunder::get_psi_setpoint()
 {
+    convert_temp();
     float a = -16.669 - (.0101059 * tempF) + (.00116512 * (tempF * tempF));
     float b = .173354 * tempF * vols_setpoint;
     float c = (4.24267 * vols_setpoint) - (.0684226 * (vols_setpoint * vols_setpoint));
@@ -110,8 +111,6 @@ float Spunder::convert_temp()
 
 void Spunder::spunder_run()
 {
-    //adc = get_adc();
-    //volts = get_volts();
     tempF = convert_temp();
     psi_value = get_psi_value();
     psi_setpoint = get_psi_setpoint();
