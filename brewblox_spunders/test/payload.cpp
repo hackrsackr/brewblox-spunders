@@ -1,11 +1,8 @@
-#include <iostream>
-#include <array>
-
 #include <Arduino_JSON.h>
 #include <EspMQTTClient.h>
 #include <Esp32HTTPUpdateServer.h>
 
-#include "spund_config.hpp"
+#include "spunder_config.hpp"
 #include "spunder.hpp"
 
 #define NUMBER_OF_SPUNDERS 4
@@ -14,7 +11,7 @@
 // Create array of Spunders
 std::array<Spunder, NUMBER_OF_SPUNDERS> spund_arr;
 
-JSONVar parsed_data; 
+JSONVar parsed_data;
 
 // From spund_config.h
 EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);

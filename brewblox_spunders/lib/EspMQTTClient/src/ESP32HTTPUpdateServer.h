@@ -54,7 +54,7 @@ public:
     }, [&]() {
       HTTPUpload& upload = _server->upload();
 
-      if (upload.status == UPLOAD_FILE_START) 
+      if (upload.status == UPLOAD_FILE_START)
       {
         // Check if we are authenticated
         if (!(_username.length() == 0 || _password.length() == 0 || _server->authenticate(_username.c_str(), _password.c_str())))
@@ -66,7 +66,7 @@ public:
         }
 
         // Debugging message for upload start
-        if (_serialDebugging) 
+        if (_serialDebugging)
         {
           Serial.setDebugOutput(true);
           Serial.printf("Update: %s\n", upload.filename.c_str());
@@ -77,12 +77,12 @@ public:
         if (_serialDebugging && error)
           Update.printError(Serial);
       }
-      else if (upload.status == UPLOAD_FILE_WRITE) 
+      else if (upload.status == UPLOAD_FILE_WRITE)
       {
-        if (Update.write(upload.buf, upload.currentSize) != upload.currentSize && _serialDebugging) 
+        if (Update.write(upload.buf, upload.currentSize) != upload.currentSize && _serialDebugging)
           Update.printError(Serial);
       }
-      else if (upload.status == UPLOAD_FILE_END) 
+      else if (upload.status == UPLOAD_FILE_END)
       {
         if (Update.end(true) && _serialDebugging)
           Serial.printf("Update Success: %u\nRebooting...\n", upload.totalSize);

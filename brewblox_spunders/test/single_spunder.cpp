@@ -2,10 +2,8 @@
 #include <Arduino_JSON.h>
 #include <EspMQTTClient.h>
 #include <Esp32HTTPUpdateServer.h>
-#include <math.h>
 
-#include "secrets.h"
-#include "spund_config.hpp"
+#include "spunder_config.hpp"
 #include "spunder.hpp"
 
 // Not from config
@@ -13,7 +11,7 @@
 
 Spunder s;
 
-JSONVar parsed_data; 
+JSONVar parsed_data;
 
 EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
 
@@ -59,11 +57,11 @@ void onConnectionEstablished()
   client.subscribe(_SUBTOPIC, [](const String &payload)
   {
     //Serial.println(payload.length());
-    JSONVar data, message; 
+    JSONVar data, message;
 
     // Get the JSON data of the sub_topic
     parsed_data = JSON.parse(payload);
-    if (JSON.typeof(parsed_data) == "undefined") 
+    if (JSON.typeof(parsed_data) == "undefined")
     {
       Serial.println("Parsing input failed!");
       return;
@@ -72,21 +70,13 @@ void onConnectionEstablished()
     // Read each spunder in the array
     float raw_temp;
 
-      // Parse message from HOST, get temp needed, filter outliers     
+    // Parse message from HOST, get temp needed, filter outliers
     raw_temp = JSON.stringify(parsed_data["data"][s.mqtt_field]["value[degC]"]).toFloat();
-    if ((s.tempC - raw_temp) < .3) { s.tempC = raw_temp; }   
-    
-    // Serial.println(s.tempC);
-    // Get data values
-    s.tempF           = s.convert_temp();
-    s.adc             = s.get_adc();
-    s.volts           = s.get_volts();
-    s.psi_value       = s.get_psi_value();
-    s.psi_setpoint    = s.get_psi_setpoint();
-    s.vols_value      = s.get_vols();
-    s.time_since_vent = s.test_carb();
+    if ((s.tempC - raw_temp) < .3) { s.tempC = raw_temp; }
 
-    // Populate data message    
+    s.spunder_run();
+
+    // Populate data message
     data[s.name]["adc"]          = s.adc;
     data[s.name]["volts"]        = s.volts;
     data[s.name]["tempC"]        = s.tempC;
