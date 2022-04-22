@@ -7,7 +7,7 @@
 #define _RELAY_OPEN HIGH
 
 // Esp USB actual voltage
-#define _VUSB 4.47
+#define _VUSB 4.42
 
 // WiFi credentials
 #define _SSID SECRET_SSID
@@ -39,19 +39,26 @@
 #define _VOLS4 4.0
 
 // Max units of each pressure sensor in psi
-#define _UMAX1 30
-#define _UMAX2 60
-#define _UMAX3 60
-#define _UMAX4 60
+#define _UMAX1 30.0
+#define _UMAX2 60.0
+#define _UMAX3 60.0
+#define _UMAX4 60.0
 
 // Pin of the relay of each spunder
-#define _RPIN1 IO14
-#define _RPIN2 IO27
-#define _RPIN3 IO16
-#define _RPIN4 IO17
+#define _RPIN1 14
+#define _RPIN2 27
+#define _RPIN3 16
+#define _RPIN4 17
 
-std::array<const int,    _NUMBER_OF_SPUNDERS> UNIT_MAXS     = { _UMAX1, _UMAX2, _UMAX3, _UMAX4 };
-std::array<const int,    _NUMBER_OF_SPUNDERS> RELAY_PINS    = { _RPIN1, _RPIN2, _RPIN3, _RPIN4 };
-std::array<const float,  _NUMBER_OF_SPUNDERS> DESIRED_VOLS  = { _VOLS1, _VOLS2, _VOLS3, _VOLS4 };
-std::array<const String, _NUMBER_OF_SPUNDERS> SPUNDER_NAMES = { _NAME1, _NAME2, _NAME3, _NAME4 };
-std::array<const String, _NUMBER_OF_SPUNDERS> MQTT_FIELDS   = { _TEMP1, _TEMP2, _TEMP3, _TEMP4 };
+// Voltage at zero pressure
+#define _OFFS1 .44
+#define _OFFS2 .2
+#define _OFFS3 .2
+#define _OFFS4 .2
+
+std::array<const String,  _NUMBER_OF_SPUNDERS> SPUNDER_NAMES = { _NAME1, _NAME2, _NAME3, _NAME4 };
+std::array<const String,  _NUMBER_OF_SPUNDERS> MQTT_FIELDS   = { _TEMP1, _TEMP2, _TEMP3, _TEMP4 };
+std::array<const double,  _NUMBER_OF_SPUNDERS> DESIRED_VOLS  = { _VOLS1, _VOLS2, _VOLS3, _VOLS4 };
+std::array<const double,  _NUMBER_OF_SPUNDERS> UNIT_MAXS     = { _UMAX1, _UMAX2, _UMAX3, _UMAX4 };
+std::array<const uint8_t, _NUMBER_OF_SPUNDERS> RELAY_PINS    = { _RPIN1, _RPIN2, _RPIN3, _RPIN4 };
+std::array<const double,  _NUMBER_OF_SPUNDERS> OFFSET_VOLTS  = { _OFFS1, _OFFS2, _OFFS3, _OFFS4 };

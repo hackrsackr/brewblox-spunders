@@ -5,7 +5,7 @@
 #include "spunder_config.hpp"
 #include "spunder.hpp"
 
-// From spund_config.h
+// From spunder_config.h
 // Create a MQTT client
 EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
 
@@ -21,64 +21,64 @@ void publishData(void);
 
 void setup()
 {
-  Serial.begin(115200);
-  ads.begin(0x48);
-  ads.setGain(GAIN_ONE);
+    Serial.begin(115200);
+    ads.begin(0x48);
+    ads.setGain(GAIN_TWOTHIRDS);
 
-  client.enableHTTPWebUpdater();
-  client.setMaxPacketSize(4096);
-  client.enableOTA();
-  //client.enableDebuggingMessages();
+    client.enableHTTPWebUpdater();
+    client.setMaxPacketSize(4096);
+    client.enableOTA();
+    // client.enableDebuggingMessages();
 
-  WiFi.begin(_SSID, _PASS);
-  Serial.println("");
+    WiFi.begin(_SSID, _PASS);
+    Serial.println("");
 
-  while (WiFi.status() != WL_CONNECTED)
-  {
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println("");
-  Serial.print("Connected to ");
-  Serial.println(_SSID);
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        delay(500);
+        Serial.print(".");
+    }
+    Serial.println("");
+    Serial.print("Connected to ");
+    Serial.println(_SSID);
+    Serial.print("IP address: ");
+    Serial.println(WiFi.localIP());
 
-  // Spunder setup
-  for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
-  {
-    spund_arr[spunder].name          = SPUNDER_NAMES[spunder];
-    spund_arr[spunder].mqtt_field    = MQTT_FIELDS[spunder];
-    spund_arr[spunder].vols_setpoint = DESIRED_VOLS[spunder];
-    spund_arr[spunder].unit_max      = UNIT_MAXS[spunder];
-    spund_arr[spunder].relay_pin     = RELAY_PINS[spunder];
+    // Spunder setup
+    for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
+    {
+        spund_arr[spunder].name          = SPUNDER_NAMES[spunder];
+        spund_arr[spunder].mqtt_field    = MQTT_FIELDS[spunder];
+        spund_arr[spunder].vols_setpoint = DESIRED_VOLS[spunder];
+        spund_arr[spunder].unit_max      = UNIT_MAXS[spunder];
+        spund_arr[spunder].relay_pin     = RELAY_PINS[spunder];
+        spund_arr[spunder].offset_volts  = OFFSET_VOLTS[spunder];
 
-    spund_arr[spunder].esp_vusb      = _VUSB;
-    spund_arr[spunder].stored_time   = millis();
-    spund_arr[spunder].ads_channel   = spunder;
-    spund_arr[spunder].tempC         = JSON.stringify(parsed_data["data"][spund_arr[spunder].mqtt_field]["value[degC]"]).toFloat();
+        spund_arr[spunder].esp_vusb = _VUSB;
+        spund_arr[spunder].stored_time = millis();
+        spund_arr[spunder].ads_channel = spunder;
 
-    pinMode(spund_arr[spunder].relay_pin, OUTPUT);
-    digitalWrite(spund_arr[spunder].relay_pin, !_RELAY_OPEN);
-  }
+        pinMode(spund_arr[spunder].relay_pin, OUTPUT);
+        digitalWrite(spund_arr[spunder].relay_pin, !_RELAY_OPEN);
+    }
 }
 
 void onConnectionEstablished()
 {
     client.subscribe(_SUBTOPIC, [](const String &payload)
-    {
+                     {
         // Get the JSON data of the sub_topic
         parsed_data = JSON.parse(payload);
         if (JSON.typeof(parsed_data) == "undefined")
         {
             Serial.println("Parsing input failed!");
             return;
-        }
-    });
+        } });
 }
 void publishData()
 {
-    if (client.isConnected()){
+    if (client.isConnected())
+    {
         // Dictionaries to hold spunder data
         JSONVar data;
         JSONVar message;
@@ -87,19 +87,19 @@ void publishData()
         for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
         {
             // Parse message from _MQTTHOST to get temperature value needed
-            //float new_temp = JSON.stringify(parsed_data["data"][spund_arr[spunder].mqtt_field]["value[degC]"]).toFloat();
             spund_arr[spunder].tempC = JSON.stringify(parsed_data["data"][spund_arr[spunder].mqtt_field]["value[degC]"]).toFloat();
-            //spund_arr[spunder].convert_temp();
-            spund_arr[spunder].spunder_run();
 
-            //  Filter outliers
-            //if ((spund_arr[spunder].tempC - new_temp) < .3) { spund_arr[spunder].tempC = new_temp; }
+            // Filter outliers
+            // float new_temp = JSON.stringify(parsed_data["data"][spund_arr[spunder].mqtt_field]["value[degC]"]).toFloat();
+            // if ((spund_arr[spunder].tempC - new_temp) < .3) { spund_arr[spunder].tempC = new_temp; }
 
-            // Convert analog reading and temp into psi_setpoint, psi_value, and current vols_value
-            spund_arr[spunder].get_psi_setpoint();
-            spund_arr[spunder].get_psi_value();
-            spund_arr[spunder].get_vols();
-            spund_arr[spunder].test_carb();
+            if (!spund_arr[spunder].tempC) {
+                Serial.println("no temp reading yet");
+                break;
+            } else
+            {
+                spund_arr[spunder].spunder_run();
+            }
 
             // Populate data message to publish to brewblox
             data[spund_arr[spunder].name]["volts"]        = spund_arr[spunder].volts;
@@ -112,7 +112,7 @@ void publishData()
         }
 
         // Format output into brewblox spec and publish
-        message["key"]  = "spunders";
+        message["key"] = "spunders";
         message["data"] = data;
 
         client.publish(_PUBTOPIC, JSON.stringify(message));
@@ -122,6 +122,6 @@ void publishData()
 
 void loop()
 {
-  client.loop();
-  publishData();
+    client.loop();
+    publishData();
 }
