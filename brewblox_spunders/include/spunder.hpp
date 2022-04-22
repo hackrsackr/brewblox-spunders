@@ -21,8 +21,8 @@ public:
     float volts;              // Volts read by the ADS1115
     float esp_vusb;           // Actual voltage of the 5v output
 
-    String mqtt_field;        // MQTT temperature field
-    String name;              // Name of spunder
+    std::string mqtt_field;   // MQTT temperature field
+    std::string name;         // Name of spunder
 
     float get_psi_value();    // Compute psi value from volts
     float get_psi_setpoint(); // Compute psi setpoint from tempC and vols_setpoint
@@ -55,10 +55,7 @@ float Spunder::get_volts()
 float Spunder::get_psi_value()
 {
     volts = ads.computeVolts(ads.readADC_SingleEnded(ads_channel));
-    //float offset = esp_vusb * .1;
-    //float readable_volts = esp_vusb * .8;
     psi_value = (volts - (esp_vusb * .1)) * unit_max / (esp_vusb * .8);
-    //psi_value = (get_volts() - offset) * unit_max / readable_volts;
 
     return psi_value;
 }
