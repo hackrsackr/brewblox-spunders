@@ -66,15 +66,18 @@ void setup()
 void onConnectionEstablished()
 {
     client.subscribe(_SUBTOPIC, [](const String &payload)
-                     {
+    {
         // Get the JSON data of the sub_topic
         parsed_data = JSON.parse(payload);
         if (JSON.typeof(parsed_data) == "undefined")
         {
             Serial.println("Parsing input failed!");
             return;
-        } });
+        }
+    });
 }
+
+
 void publishData()
 {
     if (client.isConnected())
@@ -89,15 +92,11 @@ void publishData()
             // Parse message from _MQTTHOST to get temperature value needed
             spund_arr[spunder].tempC = JSON.stringify(parsed_data["data"][spund_arr[spunder].mqtt_field]["value[degC]"]).toFloat();
 
-            // Filter outliers
-            // float new_temp = JSON.stringify(parsed_data["data"][spund_arr[spunder].mqtt_field]["value[degC]"]).toFloat();
-            // if ((spund_arr[spunder].tempC - new_temp) < .3) { spund_arr[spunder].tempC = new_temp; }
-
             if (!spund_arr[spunder].tempC) {
                 Serial.println("no temp reading yet");
                 break;
-            } else
-            {
+
+            } else {
                 spund_arr[spunder].spunder_run();
             }
 

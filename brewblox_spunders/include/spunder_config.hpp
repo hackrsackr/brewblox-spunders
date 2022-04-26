@@ -58,7 +58,7 @@
 
 std::array<const String,  _NUMBER_OF_SPUNDERS> SPUNDER_NAMES = { _NAME1, _NAME2, _NAME3, _NAME4 };
 std::array<const String,  _NUMBER_OF_SPUNDERS> MQTT_FIELDS   = { _TEMP1, _TEMP2, _TEMP3, _TEMP4 };
-std::array<const double,  _NUMBER_OF_SPUNDERS> DESIRED_VOLS  = { _VOLS1, _VOLS2, _VOLS3, _VOLS4 };
-std::array<const double,  _NUMBER_OF_SPUNDERS> UNIT_MAXS     = { _UMAX1, _UMAX2, _UMAX3, _UMAX4 };
+std::array<const float,   _NUMBER_OF_SPUNDERS> DESIRED_VOLS  = { _VOLS1, _VOLS2, _VOLS3, _VOLS4 };
+std::array<const float,   _NUMBER_OF_SPUNDERS> UNIT_MAXS     = { _UMAX1, _UMAX2, _UMAX3, _UMAX4 };
 std::array<const uint8_t, _NUMBER_OF_SPUNDERS> RELAY_PINS    = { _RPIN1, _RPIN2, _RPIN3, _RPIN4 };
-std::array<const double,  _NUMBER_OF_SPUNDERS> OFFSET_VOLTS  = { _OFFS1, _OFFS2, _OFFS3, _OFFS4 };
+std::array<const float,   _NUMBER_OF_SPUNDERS> OFFSET_VOLTS  = { _OFFS1, _OFFS2, _OFFS3, _OFFS4 };
