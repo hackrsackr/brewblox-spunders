@@ -58,7 +58,7 @@
       "shellscript"
     ],
     "[dockerfile]": {
-      "editor.formatOnSave": false
+      "editor.formatOnSave": true
     },
     "remote.localPortHost": "allInterfaces"
   }
