@@ -51,10 +51,10 @@
 #define _RPIN4 17
 
 // Voltage at zero pressure
-#define _OFFS1 .44
-#define _OFFS2 .2
-#define _OFFS3 .2
-#define _OFFS4 .2
+#define _OFFS1 .53
+#define _OFFS2 .44
+#define _OFFS3 .44
+#define _OFFS4 .44
 
 std::array<const String,  _NUMBER_OF_SPUNDERS> SPUNDER_NAMES = { _NAME1, _NAME2, _NAME3, _NAME4 };
 std::array<const String,  _NUMBER_OF_SPUNDERS> MQTT_FIELDS   = { _TEMP1, _TEMP2, _TEMP3, _TEMP4 };
