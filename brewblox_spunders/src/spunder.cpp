@@ -1,6 +1,6 @@
 #include <Arduino_JSON.h>
 #include <EspMQTTClient.h>
-#include "Esp32HTTPUpdateServer.h"
+#include "ESP32HTTPUpdateServer.h"
 
 #include "spunder_config.hpp"
 #include "spunder.hpp"
@@ -28,7 +28,7 @@ void setup()
     client.enableHTTPWebUpdater();
     client.setMaxPacketSize(4096);
     client.enableOTA();
-    // client.enableDebuggingMessages();
+    client.enableDebuggingMessages();
 
     WiFi.begin(_SSID, _PASS);
     Serial.println("");
@@ -115,6 +115,11 @@ void publishData()
         message["data"] = data;
 
         client.publish(_PUBTOPIC, JSON.stringify(message));
+        
+        // Serial.println(message);
+        // Serial.println("");
+        Serial.println(JSON.stringify(message).length());
+        Serial.println("");
         delay(5000);
     }
 }
