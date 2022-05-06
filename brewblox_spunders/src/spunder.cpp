@@ -28,20 +28,27 @@ void setup()
     client.enableHTTPWebUpdater();
     client.setMaxPacketSize(4096);
     client.enableOTA();
-    client.enableDebuggingMessages();
+    //client.enableDebuggingMessages();
 
+    // WiFi
+    WiFi.disconnect(true);
+    delay(1000);
     WiFi.begin(_SSID, _PASS);
-    Serial.println("");
-
+    
+    uint8_t failed_connections = 0;
     while (WiFi.status() != WL_CONNECTED)
     {
         delay(500);
-        Serial.print(".");
+        Serial.println("connecting..");
+        failed_connections ++;
+        if (failed_connections > 150) 
+        {
+            Serial.println("restarting..");
+            ESP.restart();
+        }
     }
-    Serial.println("");
+    
     Serial.print("Connected to ");
-    Serial.println(_SSID);
-    Serial.print("IP address: ");
     Serial.println(WiFi.localIP());
 
     // Spunder setup
@@ -74,6 +81,7 @@ void onConnectionEstablished()
             Serial.println("Parsing input failed!");
             return;
         }
+        publishData();
     });
 }
 
@@ -91,10 +99,10 @@ void publishData()
         {
             // Parse message from _MQTTHOST to get temperature value needed
             spund_arr[spunder].tempC = JSON.stringify(parsed_data["data"][spund_arr[spunder].mqtt_field]["value[degC]"]).toFloat();
-
             if (!spund_arr[spunder].tempC) {
-                Serial.println("no temp reading yet");
-                break;
+                Serial.print(spunder);
+                Serial.println(" no temp reading");
+                continue;
 
             } else {
                 spund_arr[spunder].spunder_run();
@@ -116,10 +124,9 @@ void publishData()
 
         client.publish(_PUBTOPIC, JSON.stringify(message));
         
-        // Serial.println(message);
-        // Serial.println("");
-        Serial.println(JSON.stringify(message).length());
+        Serial.println(message);
         Serial.println("");
+
         delay(5000);
     }
 }
@@ -127,5 +134,5 @@ void publishData()
 void loop()
 {
     client.loop();
-    publishData();
+    //publishData();
 }
