@@ -36,7 +36,7 @@ public:
 private:
     // ADS1115 methods
     uint16_t get_adc();       // Read adc value from ads1115
-    float get_volts();       // Read volts value from ads1115
+    float get_volts();        // Read volts value from ads1115
 };
 
 uint16_t Spunder::get_adc()

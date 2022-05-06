@@ -134,5 +134,4 @@ void publishData()
 void loop()
 {
     client.loop();
-    //publishData();
 }
