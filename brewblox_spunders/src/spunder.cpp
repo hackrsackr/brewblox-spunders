@@ -115,11 +115,6 @@ void publishData()
         message["data"] = data;
 
         client.publish(_PUBTOPIC, JSON.stringify(message));
-        
-        // Serial.println(message);
-        // Serial.println("");
-        Serial.println(JSON.stringify(message).length());
-        Serial.println("");
         delay(5000);
     }
 }
