@@ -41,7 +41,7 @@ void setup()
         delay(500);
         Serial.println("connecting..");
         failed_connections ++;
-        if (failed_connections > 150) 
+        if (failed_connections > 20) 
         {
             Serial.println("restarting..");
             ESP.restart();
