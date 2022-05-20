@@ -1,6 +1,7 @@
-#include <Arduino_JSON.h>
+#include <iostream>
+#include <ArduinoJson.h>
 #include <EspMQTTClient.h>
-#include "ESP32HTTPUpdateServer.h"
+#include <ESP32HTTPUpdateServer.h>
 
 #include "spunder_config.hpp"
 #include "spunder.hpp"
@@ -12,8 +13,7 @@ EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
 // Create array of Spunders
 std::array<Spunder, _NUMBER_OF_SPUNDERS> spund_arr;
 
-// Json object to hold the payload from client.suscribe
-JSONVar parsed_data;
+DynamicJsonDocument input(4096);
 
 // Client run function
 void onConnectionEstablished(void);
@@ -34,20 +34,20 @@ void setup()
     WiFi.disconnect(true);
     delay(1000);
     WiFi.begin(_SSID, _PASS);
-    
+
     uint8_t failed_connections = 0;
     while (WiFi.status() != WL_CONNECTED)
     {
         delay(500);
         Serial.println("connecting..");
         failed_connections ++;
-        if (failed_connections > 20) 
+        if (failed_connections > 20)
         {
             Serial.println("restarting..");
             ESP.restart();
         }
     }
-    
+
     Serial.print("Connected to ");
     Serial.println(WiFi.localIP());
 
@@ -74,12 +74,12 @@ void onConnectionEstablished()
 {
     client.subscribe(_SUBTOPIC, [](const String &payload)
     {
-        // Get the JSON data of the sub_topic
-        parsed_data = JSON.parse(payload);
-        if (JSON.typeof(parsed_data) == "undefined")
+        Serial.println(payload);
+        deserializeJson(input, payload);
+        for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
         {
-            Serial.println("Parsing input failed!");
-            return;
+          spund_arr[spunder].tempC = input["data"][spund_arr[spunder].mqtt_field]["value[degC]"];
+          //Serial.println(spund_arr[spunder].tempC);
         }
         publishData();
     });
@@ -90,17 +90,14 @@ void publishData()
 {
     if (client.isConnected())
     {
-        // Dictionaries to hold spunder data
-        JSONVar data;
-        JSONVar message;
+
+        DynamicJsonDocument message(768);
+        message["key"] = _CLIENTID;
 
         // Read each spunder in the array of spunders
         for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
         {
-            // Parse message from _MQTTHOST to get temperature value needed
-            spund_arr[spunder].tempC = JSON.stringify(parsed_data["data"][spund_arr[spunder].mqtt_field]["value[degC]"]).toFloat();
             if (!spund_arr[spunder].tempC) {
-                Serial.print(spunder);
                 Serial.println(" no temp reading");
                 continue;
 
@@ -109,23 +106,18 @@ void publishData()
             }
 
             // Populate data message to publish to brewblox
-            data[spund_arr[spunder].name]["volts"]        = spund_arr[spunder].volts;
-            data[spund_arr[spunder].name]["tempC"]        = spund_arr[spunder].tempC;
-            data[spund_arr[spunder].name]["psi_setpoint"] = spund_arr[spunder].psi_setpoint;
-            data[spund_arr[spunder].name]["psi"]          = spund_arr[spunder].psi_value;
-            data[spund_arr[spunder].name]["vols_target"]  = spund_arr[spunder].vols_setpoint;
-            data[spund_arr[spunder].name]["volumes[co2]"] = spund_arr[spunder].vols_value;
-            data[spund_arr[spunder].name]["since_vent"]   = spund_arr[spunder].time_since_vent;
+            message["data"][spund_arr[spunder].name]["volts"]        = spund_arr[spunder].volts;
+            message["data"][spund_arr[spunder].name]["tempC"]        = spund_arr[spunder].tempC;
+            message["data"][spund_arr[spunder].name]["psi_setpoint"] = spund_arr[spunder].psi_setpoint;
+            message["data"][spund_arr[spunder].name]["psi"]          = spund_arr[spunder].psi_value;
+            message["data"][spund_arr[spunder].name]["vols_target"]  = spund_arr[spunder].vols_setpoint;
+            message["data"][spund_arr[spunder].name]["volumes[co2]"] = spund_arr[spunder].vols_value;
+            message["data"][spund_arr[spunder].name]["since_vent"]   = spund_arr[spunder].time_since_vent;
         }
 
-        // Format output into brewblox spec and publish
-        message["key"] = "spunders";
-        message["data"] = data;
+        serializeJsonPretty(message, Serial);
 
-        client.publish(_PUBTOPIC, JSON.stringify(message));
-        
-        Serial.println(message);
-        Serial.println("");
+        client.publish(_PUBTOPIC, message.as<String>());
 
         delay(5000);
     }
