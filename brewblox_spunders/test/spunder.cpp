@@ -59,9 +59,9 @@ void setup()
         spund_arr[spunder].vols_setpoint = DESIRED_VOLS[spunder];
         spund_arr[spunder].unit_max      = UNIT_MAXS[spunder];
         spund_arr[spunder].relay_pin     = RELAY_PINS[spunder];
-        spund_arr[spunder].offset_volts  = OFFSET_VOLTS[spunder];
+        spund_arr[spunder].offset_volts  = ESP_VOLTS[spunder];
 
-        spund_arr[spunder].esp_vusb = _VUSB;
+        spund_arr[spunder].esp_vusb = _VESP;
         spund_arr[spunder].stored_time = millis();
         spund_arr[spunder].ads_channel = spunder;
 
