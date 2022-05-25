@@ -59,9 +59,9 @@ void setup()
         spund_arr[spunder].vols_setpoint = DESIRED_VOLS[spunder];
         spund_arr[spunder].unit_max      = UNIT_MAXS[spunder];
         spund_arr[spunder].relay_pin     = RELAY_PINS[spunder];
-        spund_arr[spunder].offset_volts  = OFFSET_VOLTS[spunder];
+        spund_arr[spunder].offset_volts  = USB_VOLTS[spunder];
 
-        spund_arr[spunder].esp_vusb = _VUSB;
+        spund_arr[spunder].esp_vusb = _PUSB;
         spund_arr[spunder].stored_time = millis();
         spund_arr[spunder].ads_channel = spunder;
 
@@ -90,14 +90,15 @@ void publishData()
 {
     if (client.isConnected())
     {
-        DynamicJsonDocument data(4096);
+        DynamicJsonDocument message(768);
+        message["key"] = _CLIENTID;
 
         // Read each spunder in the array of spunders
         for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
         {
-            spund_arr[spunder].tempC = input["data"][spund_arr[spunder].mqtt_field]["value[degC]"];
             if (!spund_arr[spunder].tempC) {
-                Serial.println(" no temp reading");
+                Serial.print("no temp reading: spunder ");
+                Serial.println(spunder);
                 continue;
 
             } else {
@@ -105,26 +106,16 @@ void publishData()
             }
 
             // Populate data message to publish to brewblox
-            data[spund_arr[spunder].name]["volts"]        = spund_arr[spunder].volts;
-            data[spund_arr[spunder].name]["tempC"]        = spund_arr[spunder].tempC;
-            data[spund_arr[spunder].name]["psi_setpoint"] = spund_arr[spunder].psi_setpoint;
-            data[spund_arr[spunder].name]["psi"]          = spund_arr[spunder].psi_value;
-            data[spund_arr[spunder].name]["vols_target"]  = spund_arr[spunder].vols_setpoint;
-            data[spund_arr[spunder].name]["volumes[co2]"] = spund_arr[spunder].vols_value;
-            data[spund_arr[spunder].name]["since_vent"]   = spund_arr[spunder].time_since_vent;
+            message["data"][spund_arr[spunder].name]["volts"]        = spund_arr[spunder].volts;
+            message["data"][spund_arr[spunder].name]["tempC"]        = spund_arr[spunder].tempC;
+            message["data"][spund_arr[spunder].name]["psi_setpoint"] = spund_arr[spunder].psi_setpoint;
+            message["data"][spund_arr[spunder].name]["psi"]          = spund_arr[spunder].psi_value;
+            message["data"][spund_arr[spunder].name]["vols_target"]  = spund_arr[spunder].vols_setpoint;
+            message["data"][spund_arr[spunder].name]["volumes[co2]"] = spund_arr[spunder].vols_value;
+            message["data"][spund_arr[spunder].name]["since_vent"]   = spund_arr[spunder].time_since_vent;
         }
 
-        DynamicJsonDocument message(4096);
-        // Format output into brewblox spec and publish
-        message["key"] = _CLIENTID;
-        message["data"] = data;
-
-        serializeJsonPretty(message, Serial);
-
-        client.publish(_PUBTOPIC, message.as<String>());
-
-        Serial.println("");
-
+        serializeJson(message, Serial);
         delay(5000);
     }
 }
