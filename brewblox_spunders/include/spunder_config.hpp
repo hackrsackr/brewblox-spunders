@@ -27,7 +27,7 @@
 #define _NAME3 "spunder3"
 #define _NAME4 "spunder4"
 
-std::array<const String, _NUMBER_OF_SPUNDERS> 
+std::array<const String, _NUMBER_OF_SPUNDERS>
 SPUNDER_NAMES = { _NAME1, _NAME2, _NAME3, _NAME4 };
 
 // Brewblox names of temps to request for each spunder mqtt_temp_field
@@ -36,16 +36,16 @@ SPUNDER_NAMES = { _NAME1, _NAME2, _NAME3, _NAME4 };
 #define _TEMP3 "TEMP_blueBeer"
 #define _TEMP4 "TEMP_blueFridge"
 
-std::array<const String, _NUMBER_OF_SPUNDERS> 
+std::array<const String, _NUMBER_OF_SPUNDERS>
 MQTT_FIELDS = { _TEMP1, _TEMP2, _TEMP3, _TEMP4 };
 
 // Desired vols of CO2 for each spunder
 #define _VOLS1 2.0
-#define _VOLS2 2.5
+#define _VOLS2 1.5
 #define _VOLS3 3.0
 #define _VOLS4 4.0
 
-std::array<const float, _NUMBER_OF_SPUNDERS> 
+std::array<const float, _NUMBER_OF_SPUNDERS>
 DESIRED_VOLS = { _VOLS1, _VOLS2, _VOLS3, _VOLS4 };
 
 // Max units of each pressure sensor in psi
@@ -54,7 +54,7 @@ DESIRED_VOLS = { _VOLS1, _VOLS2, _VOLS3, _VOLS4 };
 #define _UMAX3 60.0
 #define _UMAX4 60.0
 
-std::array<const float, _NUMBER_OF_SPUNDERS> 
+std::array<const float, _NUMBER_OF_SPUNDERS>
 UNIT_MAXS = { _UMAX1, _UMAX2, _UMAX3, _UMAX4 };
 
 // Pin of the relay of each spunder
@@ -63,7 +63,7 @@ UNIT_MAXS = { _UMAX1, _UMAX2, _UMAX3, _UMAX4 };
 #define _RPIN3 16
 #define _RPIN4 17
 
-std::array<const uint8_t, _NUMBER_OF_SPUNDERS> 
+std::array<const uint8_t, _NUMBER_OF_SPUNDERS>
 RELAY_PINS = { _RPIN1, _RPIN2, _RPIN3, _RPIN4 };
 
 // Voltage at zero pressure using esp vcc
@@ -72,7 +72,7 @@ RELAY_PINS = { _RPIN1, _RPIN2, _RPIN3, _RPIN4 };
 #define _ESPV3 .43
 #define _ESPV4 .42
 
-std::array<const float, _NUMBER_OF_SPUNDERS> 
+std::array<const float, _NUMBER_OF_SPUNDERS>
 ESP_VOLTS ={ _ESPV1, _ESPV2, _ESPV3, _ESPV4 };
 
 // Voltage at zero pressure using pi usb as 5v source
