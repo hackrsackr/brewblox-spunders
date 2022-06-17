@@ -34,7 +34,6 @@ void setup()
     WiFi.disconnect(true);
     delay(1000);
     WiFi.begin(_SSID, _PASS);
-
     uint8_t failed_connections = 0;
     while (WiFi.status() != WL_CONNECTED)
     {
@@ -47,7 +46,6 @@ void setup()
             ESP.restart();
         }
     }
-
     Serial.print("Connected to ");
     Serial.println(WiFi.localIP());
 
@@ -59,9 +57,9 @@ void setup()
         spund_arr[spunder].vols_setpoint = DESIRED_VOLS[spunder];
         spund_arr[spunder].unit_max      = UNIT_MAXS[spunder];
         spund_arr[spunder].relay_pin     = RELAY_PINS[spunder];
-        spund_arr[spunder].offset_volts  = USB_VOLTS[spunder];
+        spund_arr[spunder].offset_volts  = ESP_VOLTS[spunder];
 
-        spund_arr[spunder].esp_vusb = _PUSB;
+        spund_arr[spunder].esp_vusb = _VESP;
         spund_arr[spunder].stored_time = millis();
         spund_arr[spunder].ads_channel = spunder;
 
@@ -74,7 +72,7 @@ void onConnectionEstablished()
 {
     client.subscribe(_SUBTOPIC, [](const String &payload)
     {
-        //Serial.println(payload);
+        Serial.println(payload);
         deserializeJson(input, payload);
         for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
         {
@@ -90,6 +88,7 @@ void publishData()
 {
     if (client.isConnected())
     {
+
         DynamicJsonDocument message(768);
         message["key"] = _CLIENTID;
 
@@ -97,8 +96,7 @@ void publishData()
         for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
         {
             if (!spund_arr[spunder].tempC) {
-                Serial.print("no temp reading: spunder ");
-                Serial.println(spunder);
+                Serial.println(" no temp reading");
                 continue;
 
             } else {
@@ -115,7 +113,10 @@ void publishData()
             message["data"][spund_arr[spunder].name]["since_vent"]   = spund_arr[spunder].time_since_vent;
         }
 
-        serializeJson(message, Serial);
+        serializeJsonPretty(message, Serial);
+
+        client.publish(_PUBTOPIC, message.as<String>());
+
         delay(5000);
     }
 }
