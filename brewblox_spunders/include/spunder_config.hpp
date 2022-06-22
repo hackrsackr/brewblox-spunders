@@ -41,7 +41,7 @@ MQTT_FIELDS = { _TEMP1, _TEMP2, _TEMP3, _TEMP4 };
 
 // Desired vols of CO2 for each spunder
 #define _VOLS1 2.0
-#define _VOLS2 1.5
+#define _VOLS2 2.2
 #define _VOLS3 3.0
 #define _VOLS4 4.0
 
