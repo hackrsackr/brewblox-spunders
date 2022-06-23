@@ -24,7 +24,7 @@ const char *PARAM_INPUT_4 = "input4";
 // HTML web page to handle 3 input fields (input1, input2, input3)
 const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE HTML><html><head>
-  <title>ESP Input Form</title>
+  <title>Spunder Setpoints</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
@@ -35,20 +35,21 @@ const char index_html[] PROGMEM = R"rawliteral(
     }
   </style></head>
   <body>
+  <p>Spunder Setpoints vols[co2]</p>
   <form action="/get">
-    input1: <input type="text" name="input1">
+    sepoint-1: <input type="text" name="input1">
     <input type="submit" value="Submit">
   </form><br>
   <form action="/get">
-    input2: <input type="text" name="input2">
+    sepoint-2: <input type="text" name="input2">
     <input type="submit" value="Submit">
   </form><br>
   <form action="/get">
-    input3: <input type="text" name="input3">
+    sepoint-3: <input type="text" name="input3">
     <input type="submit" value="Submit">
   </form><br>
   <form action="/get">
-    input4: <input type="text" name="input4">
+    sepoint-4: <input type="text" name="input4">
     <input type="submit" value="Submit">
   </form>
 </body></html>)rawliteral";
@@ -57,28 +58,24 @@ void notFound(AsyncWebServerRequest *request)
 {
   request->send(404, "text/plain", "Not found");
 }
-// Replaces placeholder with DS18B20 values
+
 String processor(const String &var)
 {
   // Serial.println(var);
   if (var == "SETPOINT1")
   {
-    DESIRED_VOLS[0] = inputMessage1.toFloat();
     return inputMessage1;
   }
   else if (var == "SETPOINT2")
   {
-    DESIRED_VOLS[1] = inputMessage2.toFloat();
     return inputMessage2;
   }
   else if (var == "SETPOINT3")
   {
-    DESIRED_VOLS[2] = inputMessage3.toFloat();
     return inputMessage3;
   }
     else if (var == "SETPOINT4")
   {
-    DESIRED_VOLS[3] = inputMessage4.toFloat();
     return inputMessage4;
   }
   return String();
