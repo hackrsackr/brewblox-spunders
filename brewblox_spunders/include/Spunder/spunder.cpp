@@ -3,8 +3,8 @@
 #include <EspMQTTClient.h>
 #include <ESP32HTTPUpdateServer.h>
 
-#include "spunder_config.hpp"
-#include "spunder.hpp"
+#include "Spunder/spunder.hpp"
+#include "Spunder/spunder_config.hpp"
 
 // From spunder_config.h
 // Create a MQTT client
