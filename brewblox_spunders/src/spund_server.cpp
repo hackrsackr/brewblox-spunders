@@ -62,22 +62,10 @@ void notFound(AsyncWebServerRequest *request)
 String processor(const String &var)
 {
   // Serial.println(var);
-  if (var == "SETPOINT1")
-  {
-    return inputMessage1;
-  }
-  else if (var == "SETPOINT2")
-  {
-    return inputMessage2;
-  }
-  else if (var == "SETPOINT3")
-  {
-    return inputMessage3;
-  }
-    else if (var == "SETPOINT4")
-  {
-    return inputMessage4;
-  }
+  if (var == "SETPOINT1") { return inputMessage1; }
+  if (var == "SETPOINT2") { return inputMessage2; }
+  if (var == "SETPOINT3") { return inputMessage3; }
+  if (var == "SETPOINT4") { return inputMessage4; }
   return String();
 }
 // Create a MQTT client
