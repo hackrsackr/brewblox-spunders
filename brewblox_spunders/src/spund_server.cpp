@@ -54,13 +54,11 @@ const char index_html[] PROGMEM = R"rawliteral(
   </form>
 </body></html>)rawliteral";
 
-void notFound(AsyncWebServerRequest *request)
-{
-  request->send(404, "text/plain", "Not found");
+void notFound(AsyncWebServerRequest *request) { 
+  request->send(404, "text/plain", "Not found"); 
 }
 
-String processor(const String &var)
-{
+String processor(const String &var) {
   // Serial.println(var);
   if (var == "SETPOINT1") { return inputMessage1; }
   if (var == "SETPOINT2") { return inputMessage2; }
@@ -68,15 +66,13 @@ String processor(const String &var)
   if (var == "SETPOINT4") { return inputMessage4; }
   return String();
 }
-// Create a MQTT client
-EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
 
-// Create array of Spunders
 std::array<Spunder, _NUMBER_OF_SPUNDERS> spund_arr;
 
-DynamicJsonDocument input(4096);
+EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
+//DynamicJsonDocument input(4096);
+StaticJsonDocument<4096> input;
 
-// Client run function
 void onConnectionEstablished(void);
 void publishData(void);
 
@@ -86,7 +82,6 @@ void setup()
   ads.begin(0x48);
   ads.setGain(GAIN_TWOTHIRDS);
 
-  client.enableHTTPWebUpdater();
   client.setMaxPacketSize(4096);
   client.enableOTA();
   // client.enableDebuggingMessages();
@@ -127,7 +122,7 @@ void setup()
     pinMode(spund_arr[spunder].relay_pin, OUTPUT);
     digitalWrite(spund_arr[spunder].relay_pin, !_RELAY_OPEN);
   }
-  // Send web page with input fields to client
+
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send_P(200, "text/html", index_html, processor); });
   server.on("/get", HTTP_GET, [](AsyncWebServerRequest *request)
@@ -169,26 +164,28 @@ void setup()
   server.begin();
 }
 
+void loop() { client.loop(); }
+
 void onConnectionEstablished()
 {
   client.subscribe(_SUBTOPIC, [](const String &payload)
-                   {
-        Serial.println(payload);
-        deserializeJson(input, payload);
-        for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
-        {
-          spund_arr[spunder].tempC = input["data"][spund_arr[spunder].mqtt_field]["value[degC]"];
-          //Serial.println(spund_arr[spunder].tempC);
-        }
-        publishData(); });
+  {
+    Serial.println(payload);
+    deserializeJson(input, payload);
+    for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
+    {
+    spund_arr[spunder].tempC = input["data"][spund_arr[spunder].mqtt_field]["value[degC]"];
+    //std::cout << spund_arr[spunder].tempC << std::endl;
+    }
+    publishData(); });
 }
 
 void publishData()
 {
   if (client.isConnected())
   {
-
-    DynamicJsonDocument message(768);
+    StaticJsonDocument<768> message;
+    //DynamicJsonDocument message(768);
     message["key"] = _CLIENTID;
 
     // Read each spunder in the array of spunders
@@ -198,13 +195,8 @@ void publishData()
       {
         Serial.println(" no temp reading");
         continue;
-      }
-      else
-      {
-        spund_arr[spunder].spunder_run();
-      }
+      } else { spund_arr[spunder].spunder_run(); }
 
-      // Populate data message to publish to brewblox
       message["data"][spund_arr[spunder].name]["volts"] = spund_arr[spunder].volts;
       message["data"][spund_arr[spunder].name]["tempC"] = spund_arr[spunder].tempC;
       message["data"][spund_arr[spunder].name]["psi_setpoint"] = spund_arr[spunder].psi_setpoint;
@@ -213,16 +205,9 @@ void publishData()
       message["data"][spund_arr[spunder].name]["volumes[co2]"] = spund_arr[spunder].vols_value;
       message["data"][spund_arr[spunder].name]["since_vent"] = spund_arr[spunder].time_since_vent;
     }
-
     serializeJsonPretty(message, Serial);
-
     client.publish(_PUBTOPIC, message.as<String>());
-
     delay(5000);
   }
 }
 
-void loop()
-{
-  client.loop();
-}
