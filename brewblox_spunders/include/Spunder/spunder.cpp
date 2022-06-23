@@ -1,19 +1,16 @@
 #include <iostream>
-
 #include <ArduinoJson.h>
 #include <EspMQTTClient.h>
 #include <ESP32HTTPUpdateServer.h>
-#include <Adafruit_ADS1X15.h>
-#include <WiFi.h>
-#include <AsyncTCP.h>
-#include <ESPAsyncWebServer.h>
-#include <Wire.h>
 
-#include "spunder_config.hpp"
-#include "spunder.hpp"
+#include "Spunder/spunder.hpp"
+#include "Spunder/spunder_config.hpp"
 
-AsyncWebServer server(80);
+// From spunder_config.h
+// Create a MQTT client
 EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
+
+// Create array of Spunders
 std::array<Spunder, _NUMBER_OF_SPUNDERS> spund_arr;
 
 DynamicJsonDocument input(4096);
@@ -21,55 +18,14 @@ DynamicJsonDocument input(4096);
 // Client run function
 void onConnectionEstablished(void);
 void publishData(void);
-String processor(const String&);
-void notFound(AsyncWebServerRequest*);
-
-String setpoint_input = String(DESIRED_VOLS[0]);
-String enabled_input = "true";
-String enableArmChecked = "";
-const char *PARAM_INPUT_1 = "setpoint_input";
-const char *PARAM_INPUT_2 = "enable_arm_input";
-
-float psi = 15.00;
-
-// HTML web page to handle 2 input fields (setpoint_input, enabled_input)
-const char index_html[] PROGMEM = R"rawliteral(
-<!DOCTYPE HTML><html>
-<head>
-<title>Volume Level Control</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-body {
-  padding: 25px;
-  background-color: black;
-  color: grey;
-  font-size: 25px;
-}
-</style>
-</head>
-<body>
-<p><strong>KettleFiller</strong></p>
-<form action="/get">
-  Enabled <input type="checkbox" name="enable_arm_input" value="true" %ENABLE_ARM_INPUT%><br><br>
-  Setpoint[L] <input type="number" step="0.5" name="setpoint_input" value="%SETPOINT%" required><br>
-  <input type="submit" value="Submit">
-</form>
-<h4>Setpoint %SETPOINT% liters</h4>
-<h4>Volume %VOLUME% liters</h4>
-</body></html>)rawliteral";
 
 void setup()
 {
     Serial.begin(115200);
-    // ADS
     ads.begin(0x48);
     ads.setGain(GAIN_TWOTHIRDS);
-    if (!ads.begin())
-    {
-        Serial.println("Failed to initialize ADS.");
-        while (1);
-    }
-    //client.enableHTTPWebUpdater();
+
+    client.enableHTTPWebUpdater();
     client.setMaxPacketSize(4096);
     client.enableOTA();
     //client.enableDebuggingMessages();
@@ -92,35 +48,6 @@ void setup()
     }
     Serial.print("Connected to ");
     Serial.println(WiFi.localIP());
-
-    // Server
-    //Send web page to client
-    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send_P(200, "text/html", index_html, processor);
-    });
-    // Receive an HTTP GET request at <ESP_IP>/get?setpoint_input=<setpoint_input>&enable_arm_input=<enabled_input>
-    server.on("/get", HTTP_GET, [] (AsyncWebServerRequest *request) {
-    // GET threshold_input value on <ESP_IP>/get?threshold_input=<inputMessage>
-    if (request->hasParam(PARAM_INPUT_1)) {
-      setpoint_input = request->getParam(PARAM_INPUT_1)->value();
-      // GET enable_arm_input value on <ESP_IP>/get?enable_arm_input=<inputMessage2>
-      if (request->hasParam(PARAM_INPUT_2)) {
-        enabled_input = request->getParam(PARAM_INPUT_2)->value();
-        enableArmChecked = "checked";
-      }
-      else {
-        enabled_input = "false";
-        enableArmChecked = "";
-      }
-    }
-    //kf.kf_enabled = enabled_input;
-    Serial.println(setpoint_input);
-    Serial.println(enabled_input);
-    request->send(200, "text/html", "HTTP GET request sent to your ESP.<br><a href=\"/\">Return to Home Page</a>");
-    });
-    server.onNotFound(notFound);
-    server.begin();
-
 
     // Spunder setup
     for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
@@ -197,23 +124,4 @@ void publishData()
 void loop()
 {
     client.loop();
-}
-
-void notFound(AsyncWebServerRequest *request) {
-  request->send(404, "text/plain", "Not found");
-}
-
-String processor(const String& var){
-  //Serial.println(var);
-  if(var == "VOLUME"){
-    return String(psi);
-  }
-  else if(var == "SETPOINT"){
-    spund_arr[0].vols_setpoint = setpoint_input.toFloat();
-    return setpoint_input;
-  }
-  else if(var == "ENABLE_ARM_INPUT"){
-    return enableArmChecked;
-  }
-  return String();
 }

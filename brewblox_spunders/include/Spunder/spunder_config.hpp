@@ -2,6 +2,13 @@
 
 // Number of sensor solenoid pairs
 #define _NUMBER_OF_SPUNDERS 4
+// Name of each setpoint
+#define _SPNM1 "SETPOINT_INPUT_1"
+#define _SPNM2 "SETPOINT_INPUT_2"
+#define _SPNM3 "SETPOINT_INPUT_3"
+#define _SPNM4 "SETPOINT_INPUT_4"
+
+std::array<const char*,  _NUMBER_OF_SPUNDERS> _SETPOINT_NAMES = { _SPNM1, _SPNM2, _SPNM3, _SPNM4 };
 
 // Relay logic
 #define _RELAY_OPEN HIGH
@@ -40,12 +47,12 @@ std::array<const String, _NUMBER_OF_SPUNDERS>
 MQTT_FIELDS = { _TEMP1, _TEMP2, _TEMP3, _TEMP4 };
 
 // Desired vols of CO2 for each spunder
-#define _VOLS1 2.0
-#define _VOLS2 2.2
-#define _VOLS3 3.0
-#define _VOLS4 4.0
+float _VOLS1 = 2.0;
+float _VOLS2 = 2.2;
+float _VOLS3 = 3.0;
+float _VOLS4 = 4.0;
 
-std::array<const float, _NUMBER_OF_SPUNDERS>
+std::array<float, _NUMBER_OF_SPUNDERS>
 DESIRED_VOLS = { _VOLS1, _VOLS2, _VOLS3, _VOLS4 };
 
 // Max units of each pressure sensor in psi
