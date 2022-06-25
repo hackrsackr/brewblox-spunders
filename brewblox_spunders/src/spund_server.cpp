@@ -37,19 +37,19 @@ const char index_html[] PROGMEM = R"rawliteral(
   <body>
   <p>Spunder Setpoints vols[co2]</p>
   <form action="/get">
-    sepoint-1: <input type="text" name="input1" value=%SETPOINT1% required>
+    sepoint-1: <input type="number" step="0.1" name="input1" value=%SETPOINT1% required>
     <input type="submit" value="Submit">
   </form><br>
   <form action="/get">
-    sepoint-2: <input type="text" name="input2" value=%SETPOINT2% required>
+    sepoint-2: <input type="number" step="0.1" name="input2" value=%SETPOINT2% required>
     <input type="submit" value="Submit">
   </form><br>
   <form action="/get">
-    sepoint-3: <input type="text" name="input3" value=%SETPOINT3% required>
+    sepoint-3: <input type="number" step="0.1" name="input3" value=%SETPOINT3% required>
     <input type="submit" value="Submit">
   </form><br>
   <form action="/get">
-    sepoint-4: <input type="text" name="input4" value=%SETPOINT4% required>
+    sepoint-4: <input type="number" step="0.1" name="input4" value=%SETPOINT4% required>
     <input type="submit" value="Submit">
   </form>
 </body></html>)rawliteral";
