@@ -5,25 +5,25 @@ Adafruit_ADS1115 ads;
 class Spunder
 {
 public:
-    uint16_t adc;             // Analog Bits
-    uint8_t ads_channel;      // Channel of the ADS1115 to read
-    uint8_t relay_pin;        // Esp32 pin of the spunder valve relay
-    uint8_t unit_max;         // Max pressure rating of the transducer in PSI
+    uint16_t adc;        // Analog Bits
+    uint8_t ads_channel; // Channel of the ADS1115 to read
+    uint8_t relay_pin;   // Esp32 pin of the spunder valve relay
+    uint8_t unit_max;    // Max pressure rating of the transducer in PSI
 
-    float psi_setpoint;       // Setpoint in PSI
-    float psi_value;          // Pressure in PSI
-    float stored_time;        // Time of last vent
-    float tempC;              // Temp in Celsius
-    float tempF;              // Temp in Fahrenheit
-    float time_since_vent;    // Time since last vent
-    float vols_setpoint;      // Desired co2 in vols
-    float vols_value;         // Actual co2 in vols
-    float volts;              // Volts read by the ADS1115
-    float esp_vusb;           // Actual voltage of the 5v intput
-    float offset_volts;       // Actual voltage at zero psi
+    float psi_setpoint;    // Setpoint in PSI
+    float psi_value;       // Pressure in PSI
+    float stored_time;     // Time of last vent
+    float tempC;           // Temp in Celsius
+    float tempF;           // Temp in Fahrenheit
+    float time_since_vent; // Time since last vent
+    float vols_setpoint;   // Desired co2 in vols
+    float vols_value;      // Actual co2 in vols
+    float volts;           // Volts read by the ADS1115
+    float esp_vusb;        // Actual voltage of the 5v intput
+    float offset_volts;    // Actual voltage at zero psi
 
-    String mqtt_field;        // MQTT temperature field
-    String name;              // Name of spunder
+    String mqtt_field; // MQTT temperature field
+    String name;       // Name of spunder
 
     float get_psi_value();    // Compute psi value from volts
     float get_psi_setpoint(); // Compute psi setpoint from tempC and vols_setpoint
@@ -31,12 +31,12 @@ public:
     float test_carb();        // Test if psi_value is greater than psi_setpoint, vent if neccessary
     float convert_temp();     // Convert temp C to F
 
-    void spunder_run();       // Get temp, psi, check carb, vent if neccessary
+    void spunder_run(); // Get temp, psi, check carb, vent if neccessary
 
 private:
     // ADS1115 methods
-    uint16_t get_adc();       // Read adc value from ads1115
-    float get_volts();        // Read volts value from ads1115
+    uint16_t get_adc(); // Read adc value from ads1115
+    float get_volts();  // Read volts value from ads1115
 };
 
 uint16_t Spunder::get_adc()
@@ -87,13 +87,14 @@ float Spunder::get_vols()
 float Spunder::test_carb()
 {
     if (psi_value > psi_setpoint)
-    {
-        digitalWrite(relay_pin, HIGH);
-        delay(500);
-        digitalWrite(relay_pin, LOW);
-        delay(500);
-        stored_time = millis();
-    }
+        if (vols_value > vols_setpoint)
+        {
+            digitalWrite(relay_pin, HIGH);
+            delay(500);
+            digitalWrite(relay_pin, LOW);
+            delay(500);
+            stored_time = millis();
+        }
     time_since_vent = ((millis() - stored_time) / 60000.0);
 
     return time_since_vent;
