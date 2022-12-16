@@ -8,7 +8,7 @@
 #define _SPNM3 "SETPOINT_INPUT_3"
 #define _SPNM4 "SETPOINT_INPUT_4"
 
-std::array<const char*,  _NUMBER_OF_SPUNDERS> _SETPOINT_NAMES = { _SPNM1, _SPNM2, _SPNM3, _SPNM4 };
+std::array<const char *, _NUMBER_OF_SPUNDERS> _SETPOINT_NAMES = {_SPNM1, _SPNM2, _SPNM3, _SPNM4};
 
 // Relay logic
 #define _RELAY_OPEN HIGH
@@ -25,7 +25,7 @@ std::array<const char*,  _NUMBER_OF_SPUNDERS> _SETPOINT_NAMES = { _SPNM1, _SPNM2
 #define _MQTTHOST "192.168.1.2"
 #define _MQTTPORT 1883
 #define _CLIENTID "spunders"
-#define _SUBTOPIC "brewcast/history/spark-two"
+#define _SUBTOPIC "brewcast/history/spark-one"
 #define _PUBTOPIC "brewcast/history/spunders"
 
 // Name of each spunder object
@@ -35,7 +35,7 @@ std::array<const char*,  _NUMBER_OF_SPUNDERS> _SETPOINT_NAMES = { _SPNM1, _SPNM2
 #define _NAME4 "spunder4"
 
 std::array<const String, _NUMBER_OF_SPUNDERS>
-SPUNDER_NAMES = { _NAME1, _NAME2, _NAME3, _NAME4 };
+    SPUNDER_NAMES = {_NAME1, _NAME2, _NAME3, _NAME4};
 
 // Brewblox names of temps to request for each spunder mqtt_temp_field
 #define _TEMP1 "TEMP_orangeBeer"
@@ -44,7 +44,7 @@ SPUNDER_NAMES = { _NAME1, _NAME2, _NAME3, _NAME4 };
 #define _TEMP4 "TEMP_blueFridge"
 
 std::array<const String, _NUMBER_OF_SPUNDERS>
-MQTT_FIELDS = { _TEMP1, _TEMP2, _TEMP3, _TEMP4 };
+    MQTT_FIELDS = {_TEMP1, _TEMP2, _TEMP3, _TEMP4};
 
 // Desired vols of CO2 for each spunder
 float _VOLS1 = 2.0;
@@ -53,7 +53,7 @@ float _VOLS3 = 3.0;
 float _VOLS4 = 4.0;
 
 std::array<float, _NUMBER_OF_SPUNDERS>
-DESIRED_VOLS = { _VOLS1, _VOLS2, _VOLS3, _VOLS4 };
+    DESIRED_VOLS = {_VOLS1, _VOLS2, _VOLS3, _VOLS4};
 
 // Max units of each pressure sensor in psi
 #define _UMAX1 30.0
@@ -62,7 +62,7 @@ DESIRED_VOLS = { _VOLS1, _VOLS2, _VOLS3, _VOLS4 };
 #define _UMAX4 60.0
 
 std::array<const float, _NUMBER_OF_SPUNDERS>
-UNIT_MAXS = { _UMAX1, _UMAX2, _UMAX3, _UMAX4 };
+    UNIT_MAXS = {_UMAX1, _UMAX2, _UMAX3, _UMAX4};
 
 // Pin of the relay of each spunder
 #define _RPIN1 14
@@ -71,7 +71,7 @@ UNIT_MAXS = { _UMAX1, _UMAX2, _UMAX3, _UMAX4 };
 #define _RPIN4 17
 
 std::array<const uint8_t, _NUMBER_OF_SPUNDERS>
-RELAY_PINS = { _RPIN1, _RPIN2, _RPIN3, _RPIN4 };
+    RELAY_PINS = {_RPIN1, _RPIN2, _RPIN3, _RPIN4};
 
 // Voltage at zero pressure using esp vcc
 #define _ESPV1 .54
@@ -80,7 +80,7 @@ RELAY_PINS = { _RPIN1, _RPIN2, _RPIN3, _RPIN4 };
 #define _ESPV4 .42
 
 std::array<const float, _NUMBER_OF_SPUNDERS>
-ESP_VOLTS ={ _ESPV1, _ESPV2, _ESPV3, _ESPV4 };
+    ESP_VOLTS = {_ESPV1, _ESPV2, _ESPV3, _ESPV4};
 
 // Voltage at zero pressure using pi usb as 5v source
 #define _PUSB1 .54
@@ -89,4 +89,4 @@ ESP_VOLTS ={ _ESPV1, _ESPV2, _ESPV3, _ESPV4 };
 #define _PUSB4 .46
 
 std::array<const float, _NUMBER_OF_SPUNDERS>
-USB_VOLTS = { _PUSB1, _PUSB2, _PUSB3, _PUSB4 };
+    USB_VOLTS = {_PUSB1, _PUSB2, _PUSB3, _PUSB4};
