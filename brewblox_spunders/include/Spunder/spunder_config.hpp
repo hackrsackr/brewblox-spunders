@@ -42,7 +42,7 @@ std::array<const String, _NUMBER_OF_SPUNDERS>
 // Brewblox names of temps to request for each spunder mqtt_temp_field
 #define _TEMP1 "TEMP_ambientRoom"
 #define _TEMP2 "TEMP_ambientRoom"
-#define _TEMP3 "TEMP_ambientRoom"
+#define _TEMP3 "TEMP_blueFridge"
 #define _TEMP4 "TEMP_blueBeer"
 
 std::array<const String, _NUMBER_OF_SPUNDERS>
