@@ -9,6 +9,7 @@ public:
     uint8_t ads_channel; // Channel of the ADS1115 to read
     uint8_t relay_pin;   // Esp32 pin of the spunder valve relay
     uint8_t unit_max;    // Max pressure rating of the transducer in PSI
+    uint8_t vent_state;  // State of vent relay
 
     float psi_setpoint;    // Setpoint in PSI
     float psi_value;       // Pressure in PSI
@@ -86,15 +87,17 @@ float Spunder::get_vols()
 
 float Spunder::test_carb()
 {
-    if (psi_value > psi_setpoint)
-        if (vols_value > vols_setpoint)
-        {
-            digitalWrite(relay_pin, HIGH);
-            delay(500);
-            digitalWrite(relay_pin, LOW);
-            delay(500);
-            stored_time = millis();
-        }
+    vent_state = 0;
+    // if (psi_value > psi_setpoint)
+    if (vols_value > vols_setpoint)
+    {
+        digitalWrite(relay_pin, HIGH);
+        delay(500);
+        digitalWrite(relay_pin, LOW);
+        delay(500);
+        stored_time = millis();
+        vent_state = 1;
+    }
     time_since_vent = ((millis() - stored_time) / 60000.0);
 
     return time_since_vent;

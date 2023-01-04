@@ -221,6 +221,7 @@ void publishData()
             message["data"][spund_arr[spunder].name]["vols_target"] = spund_arr[spunder].vols_setpoint;
             message["data"][spund_arr[spunder].name]["volumes[co2]"] = spund_arr[spunder].vols_value;
             message["data"][spund_arr[spunder].name]["since_vent"] = spund_arr[spunder].time_since_vent;
+            message["data"][spund_arr[spunder].name]["vent_state"] = spund_arr[spunder].vent_state;
         }
         serializeJsonPretty(message, Serial);
         client.publish(_PUBTOPIC, message.as<String>());
