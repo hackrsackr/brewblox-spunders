@@ -21,7 +21,7 @@ const char *PARAM_INPUT_2 = "input2";
 const char *PARAM_INPUT_3 = "input3";
 const char *PARAM_INPUT_4 = "input4";
 
-// HTML web page to handle 3 input fields (input1, input2, input3)
+// HTML web page to handle 4 input fields (Setpoint 1, Setpoint 2, Setpoint 3, Setpoint 4)
 const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE HTML><html><head>
   <title>Spunder Setpoints</title>
