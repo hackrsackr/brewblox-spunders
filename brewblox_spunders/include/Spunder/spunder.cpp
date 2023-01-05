@@ -77,41 +77,38 @@ void onConnectionEstablished()
 
 void publishData()
 {
-    if (client.isConnected())
+    StaticJsonDocument<768> message;
+    message["key"] = _CLIENTID;
+
+    // Read each spunder in the array of spunders
+    for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
     {
-        StaticJsonDocument<768> message;
-        message["key"] = _CLIENTID;
-
-        // Read each spunder in the array of spunders
-        for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
+        if (!spund_arr[spunder].tempC)
         {
-            if (!spund_arr[spunder].tempC)
-            {
-                Serial.println(" no temp reading");
-                continue;
-            }
-            else
-            {
-                spund_arr[spunder].spunder_run();
-            }
-
-            // Populate data message to publish to brewblox
-            message["data"][spund_arr[spunder].name]["volts"] = spund_arr[spunder].volts;
-            message["data"][spund_arr[spunder].name]["tempC"] = spund_arr[spunder].tempC;
-            message["data"][spund_arr[spunder].name]["psi_setpoint"] = spund_arr[spunder].psi_setpoint;
-            message["data"][spund_arr[spunder].name]["psi"] = spund_arr[spunder].psi_value;
-            message["data"][spund_arr[spunder].name]["vols_target"] = spund_arr[spunder].vols_setpoint;
-            message["data"][spund_arr[spunder].name]["volumes[co2]"] = spund_arr[spunder].vols_value;
-            message["data"][spund_arr[spunder].name]["since_vent"] = spund_arr[spunder].time_since_vent;
-            message["data"][spund_arr[spunder].name]["vent_state"] = spund_arr[spunder].vent_state;
+            Serial.println(" no temp reading");
+            continue;
+        }
+        else
+        {
+            spund_arr[spunder].spunder_run();
         }
 
-        serializeJsonPretty(message, Serial);
-
-        client.publish(_PUBTOPIC, message.as<String>());
-
-        delay(5000);
+        // Populate data message to publish to brewblox
+        message["data"][spund_arr[spunder].name]["volts"] = spund_arr[spunder].volts;
+        message["data"][spund_arr[spunder].name]["tempC"] = spund_arr[spunder].tempC;
+        message["data"][spund_arr[spunder].name]["psi_setpoint"] = spund_arr[spunder].psi_setpoint;
+        message["data"][spund_arr[spunder].name]["psi"] = spund_arr[spunder].psi_value;
+        message["data"][spund_arr[spunder].name]["vols_target"] = spund_arr[spunder].vols_setpoint;
+        message["data"][spund_arr[spunder].name]["volumes[co2]"] = spund_arr[spunder].vols_value;
+        message["data"][spund_arr[spunder].name]["since_vent"] = spund_arr[spunder].time_since_vent;
+        message["data"][spund_arr[spunder].name]["vent_state"] = spund_arr[spunder].vent_state;
     }
+
+    serializeJsonPretty(message, Serial);
+
+    client.publish(_PUBTOPIC, message.as<String>());
+
+    delay(5000);
 }
 
 void loop()
