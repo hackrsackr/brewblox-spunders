@@ -3,15 +3,6 @@
 // Number of sensor solenoid pairs
 #define _NUMBER_OF_SPUNDERS 4
 
-// Name of each setpoint
-#define _SPNM1 "SETPOINT_INPUT_1"
-#define _SPNM2 "SETPOINT_INPUT_2"
-#define _SPNM3 "SETPOINT_INPUT_3"
-#define _SPNM4 "SETPOINT_INPUT_4"
-
-std::array<const char *, _NUMBER_OF_SPUNDERS>
-    _SETPOINT_NAMES = {_SPNM1, _SPNM2, _SPNM3, _SPNM4};
-
 // Relay logic
 #define _RELAY_OPEN HIGH
 
@@ -40,10 +31,10 @@ std::array<const String, _NUMBER_OF_SPUNDERS>
     SPUNDER_NAMES = {_NAME1, _NAME2, _NAME3, _NAME4};
 
 // Brewblox names of temps to request for each spunder mqtt_temp_field
-#define _TEMP1 "TEMP_ambientRoom"
-#define _TEMP2 "TEMP_ambientRoom"
-#define _TEMP3 "TEMP_blueFridge"
-#define _TEMP4 "TEMP_blueBeer"
+String _TEMP1 = "TEMP_ambientRoom";
+String _TEMP2 = "TEMP_ambientRoom";
+String _TEMP3 = "TEMP_blueFridge";
+String _TEMP4 = "TEMP_blueBeer";
 
 std::array<const String, _NUMBER_OF_SPUNDERS>
     MQTT_FIELDS = {_TEMP1, _TEMP2, _TEMP3, _TEMP4};
@@ -92,3 +83,33 @@ std::array<const float, _NUMBER_OF_SPUNDERS>
 
 std::array<const float, _NUMBER_OF_SPUNDERS>
     USB_VOLTS = {_PUSB1, _PUSB2, _PUSB3, _PUSB4};
+
+// Server setpoint message fields
+String setpointMessage1 = String(DESIRED_VOLS[0]);
+String setpointMessage2 = String(DESIRED_VOLS[1]);
+String setpointMessage3 = String(DESIRED_VOLS[2]);
+String setpointMessage4 = String(DESIRED_VOLS[3]);
+
+// Server mqtt temp message fields
+String mqttMessage1 = MQTT_FIELDS[0];
+String mqttMessage2 = MQTT_FIELDS[1];
+String mqttMessage3 = MQTT_FIELDS[2];
+String mqttMessage4 = MQTT_FIELDS[3];
+
+// Server setpoint inputs
+#define _SPIN1 "setpoint_input1"
+#define _SPIN2 "setpoint_input2"
+#define _SPIN3 "setpoint_input3"
+#define _SPIN4 "setpoint_input4"
+
+std::array<const char *, _NUMBER_OF_SPUNDERS>
+    _SETPOINT_INPUTS = {_SPIN1, _SPIN2, _SPIN3, _SPIN4};
+
+// Server mqtt temp field inputs
+#define _MQIN1 "mqtt_input1"
+#define _MQIN2 "mqtt_input2"
+#define _MQIN3 "mqtt_input3"
+#define _MQIN4 "mqtt_input4"
+
+std::array<const char *, _NUMBER_OF_SPUNDERS>
+    _MQTT_INPUTS = {_MQIN1, _MQIN2, _MQIN3, _MQIN4};
