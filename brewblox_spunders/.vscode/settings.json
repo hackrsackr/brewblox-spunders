@@ -63,5 +63,6 @@
   "remote.localPortHost": "allInterfaces",
   "githubPullRequests.ignoredPullRequestBranches": [
     "server"
-  ]
+  ],
+  "C_Cpp.errorSquiggles": "disabled"
 }
