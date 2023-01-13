@@ -28,25 +28,25 @@
 #define _NAME4 "spunder4"
 
 std::array<const String, _NUMBER_OF_SPUNDERS>
-    SPUNDER_NAMES = {_NAME1, _NAME2, _NAME3, _NAME4};
+    _SPUNDER_NAMES = {_NAME1, _NAME2, _NAME3, _NAME4};
 
 // Brewblox names of temps to request for each spunder mqtt_temp_field
 String _TEMP1 = "TEMP_ambientRoom";
 String _TEMP2 = "TEMP_ambientRoom";
-String _TEMP3 = "TEMP_blueBeer";
-String _TEMP4 = "TEMP_orangeBeer";
+String _TEMP3 = "TEMP_ambientRoom";
+String _TEMP4 = "TEMP_ambientRoom";
 
 std::array<const String, _NUMBER_OF_SPUNDERS>
-    MQTT_FIELDS = {_TEMP1, _TEMP2, _TEMP3, _TEMP4};
+    _MQTT_FIELDS = {_TEMP1, _TEMP2, _TEMP3, _TEMP4};
 
 // Desired vols of CO2 for each spunder
-float _VOLS1 = 2.5;
-float _VOLS2 = 2.5;
-float _VOLS3 = 2.5;
-float _VOLS4 = 2.5;
+float _VOLS1 = 2.2;
+float _VOLS2 = 2.2;
+float _VOLS3 = 2.2;
+float _VOLS4 = 2.2;
 
 std::array<float, _NUMBER_OF_SPUNDERS>
-    DESIRED_VOLS = {_VOLS1, _VOLS2, _VOLS3, _VOLS4};
+    _DESIRED_VOLS = {_VOLS1, _VOLS2, _VOLS3, _VOLS4};
 
 // Max units of each pressure sensor in psi
 #define _UMAX1 30.0
@@ -55,7 +55,7 @@ std::array<float, _NUMBER_OF_SPUNDERS>
 #define _UMAX4 60.0
 
 std::array<const float, _NUMBER_OF_SPUNDERS>
-    UNIT_MAXS = {_UMAX1, _UMAX2, _UMAX3, _UMAX4};
+    _UNIT_MAXS = {_UMAX1, _UMAX2, _UMAX3, _UMAX4};
 
 // Pin of the relay of each spunder
 #define _RPIN1 14
@@ -64,7 +64,7 @@ std::array<const float, _NUMBER_OF_SPUNDERS>
 #define _RPIN4 17
 
 std::array<const uint8_t, _NUMBER_OF_SPUNDERS>
-    RELAY_PINS = {_RPIN1, _RPIN2, _RPIN3, _RPIN4};
+    _RELAY_PINS = {_RPIN1, _RPIN2, _RPIN3, _RPIN4};
 
 // Voltage at zero pressure using esp vcc
 #define _ESPV1 .54
@@ -73,7 +73,7 @@ std::array<const uint8_t, _NUMBER_OF_SPUNDERS>
 #define _ESPV4 .42
 
 std::array<const float, _NUMBER_OF_SPUNDERS>
-    ESP_VOLTS = {_ESPV1, _ESPV2, _ESPV3, _ESPV4};
+    _ESP_VOLTS = {_ESPV1, _ESPV2, _ESPV3, _ESPV4};
 
 // Voltage at zero pressure using pi usb as 5v source
 #define _PUSB1 .54
@@ -82,19 +82,25 @@ std::array<const float, _NUMBER_OF_SPUNDERS>
 #define _PUSB4 .46
 
 std::array<const float, _NUMBER_OF_SPUNDERS>
-    USB_VOLTS = {_PUSB1, _PUSB2, _PUSB3, _PUSB4};
+    _USB_VOLTS = {_PUSB1, _PUSB2, _PUSB3, _PUSB4};
 
 // Server setpoint message fields
-String setpointMessage1 = String(DESIRED_VOLS[0]);
-String setpointMessage2 = String(DESIRED_VOLS[1]);
-String setpointMessage3 = String(DESIRED_VOLS[2]);
-String setpointMessage4 = String(DESIRED_VOLS[3]);
+String _SPMS1 = String(_DESIRED_VOLS[0]);
+String _SPMS2 = String(_DESIRED_VOLS[1]);
+String _SPMS3 = String(_DESIRED_VOLS[2]);
+String _SPMS4 = String(_DESIRED_VOLS[3]);
+
+std::array<String, _NUMBER_OF_SPUNDERS>
+    _SETPOINT_MESSAGES = {_SPMS1, _SPMS2, _SPMS3, _SPMS4};
 
 // Server mqtt temp message fields
-String mqttMessage1 = MQTT_FIELDS[0];
-String mqttMessage2 = MQTT_FIELDS[1];
-String mqttMessage3 = MQTT_FIELDS[2];
-String mqttMessage4 = MQTT_FIELDS[3];
+String _MQMS1 = _MQTT_FIELDS[0];
+String _MQMS2 = _MQTT_FIELDS[1];
+String _MQMS3 = _MQTT_FIELDS[2];
+String _MQMS4 = _MQTT_FIELDS[3];
+
+std::array<String, _NUMBER_OF_SPUNDERS>
+    _MQTT_MESSAGES = {_MQMS1, _MQMS2, _MQMS3, _MQMS4};
 
 // Server setpoint inputs
 #define _SPIN1 "setpoint_input1"

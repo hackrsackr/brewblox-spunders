@@ -99,35 +99,35 @@ String processor(const String &var)
 {
     if (var == "SETPOINT1")
     {
-        return setpointMessage1;
+        return _SETPOINT_MESSAGES[0];
     }
     if (var == "SETPOINT2")
     {
-        return setpointMessage2;
+        return _SETPOINT_MESSAGES[1];
     }
     if (var == "SETPOINT3")
     {
-        return setpointMessage3;
+        return _SETPOINT_MESSAGES[2];
     }
     if (var == "SETPOINT4")
     {
-        return setpointMessage4;
+        return _SETPOINT_MESSAGES[3];
     }
     if (var == "MQTT1")
     {
-        return mqttMessage1;
+        return _MQTT_MESSAGES[0];
     }
     if (var == "MQTT2")
     {
-        return mqttMessage2;
+        return _MQTT_MESSAGES[1];
     }
     if (var == "MQTT3")
     {
-        return mqttMessage3;
+        return _MQTT_MESSAGES[2];
     }
     if (var == "MQTT4")
     {
-        return mqttMessage4;
+        return _MQTT_MESSAGES[3];
     }
     return String();
 }

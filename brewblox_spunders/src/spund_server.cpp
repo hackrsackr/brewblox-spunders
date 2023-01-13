@@ -12,13 +12,15 @@
 #include "Spunder/spunder_config.hpp"
 #include "Server/server.hpp"
 
-AsyncWebServer server(80);
+// AsyncWebServer server(80);
+// std::array<Spunder, _NUMBER_OF_SPUNDERS> spund_arr;
+// EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
+// StaticJsonDocument<4096> input;
 
 std::array<Spunder, _NUMBER_OF_SPUNDERS> spund_arr;
-
-EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
-
 StaticJsonDocument<4096> input;
+AsyncWebServer server(80);
+EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
 
 void initWifi(void);
 void onConnectionEstablished(void);
@@ -39,12 +41,12 @@ void setup()
     // Spunder setup
     for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
     {
-        spund_arr[spunder].name = SPUNDER_NAMES[spunder];
-        spund_arr[spunder].mqtt_field = MQTT_FIELDS[spunder];
-        spund_arr[spunder].vols_setpoint = DESIRED_VOLS[spunder];
-        spund_arr[spunder].unit_max = UNIT_MAXS[spunder];
-        spund_arr[spunder].relay_pin = RELAY_PINS[spunder];
-        spund_arr[spunder].offset_volts = ESP_VOLTS[spunder];
+        spund_arr[spunder].name = _SPUNDER_NAMES[spunder];
+        spund_arr[spunder].mqtt_field = _MQTT_FIELDS[spunder];
+        spund_arr[spunder].vols_setpoint = _DESIRED_VOLS[spunder];
+        spund_arr[spunder].unit_max = _UNIT_MAXS[spunder];
+        spund_arr[spunder].relay_pin = _RELAY_PINS[spunder];
+        spund_arr[spunder].offset_volts = _ESP_VOLTS[spunder];
 
         spund_arr[spunder].esp_vusb = _VESP;
         spund_arr[spunder].stored_time = millis();
@@ -61,62 +63,21 @@ void setup()
     String inputMessage;
     String inputParam;
 
-    if (request->hasParam(_SETPOINT_INPUTS[0])) {
-      // GET setpoint_input1 values on <ESP_IP>/get?setpoint_input1=<inputMessage>
-      setpointMessage1 = request->getParam(_SETPOINT_INPUTS[0])->value();
-      spund_arr[0].vols_setpoint = setpointMessage1.toFloat();
-      inputMessage = setpointMessage1;
-      inputParam = _SETPOINT_INPUTS[0];
-    }
+    for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
+    {
+        if (request->hasParam(_SETPOINT_INPUTS[spunder])) {
+            _SETPOINT_MESSAGES[spunder] = request->getParam(_SETPOINT_INPUTS[spunder])->value();
+            spund_arr[spunder].vols_setpoint = _SETPOINT_MESSAGES[spunder].toFloat();
+            inputMessage = _SETPOINT_MESSAGES[spunder];
+            inputParam = _SETPOINT_INPUTS[spunder];
+        }
+        if (request->hasParam(_MQTT_INPUTS[spunder])) {
+            _MQTT_MESSAGES[spunder] = request->getParam(_MQTT_INPUTS[spunder])->value();
+            spund_arr[spunder].mqtt_field =  _MQTT_MESSAGES[spunder];
+            inputMessage = _MQTT_MESSAGES[spunder];
+            inputParam = _MQTT_INPUTS[spunder];
+        }
 
-    else if (request->hasParam(_SETPOINT_INPUTS[1])) {
-      // GET setpoint_input2 value on <ESP_IP>/get?setpoint_input2=<inputMessage>
-      setpointMessage2 = request->getParam(_SETPOINT_INPUTS[1])->value();
-      spund_arr[1].vols_setpoint = setpointMessage2.toFloat();
-      inputMessage = setpointMessage2;
-      inputParam = _SETPOINT_INPUTS[1];
-    }
-    else if (request->hasParam(_SETPOINT_INPUTS[2])) {
-      // GET setpoint_input3 value on <ESP_IP>/get?setpoint_input3=<inputMessage>
-      setpointMessage3 = request->getParam(_SETPOINT_INPUTS[2])->value();
-      spund_arr[2].vols_setpoint = setpointMessage3.toFloat();
-      inputMessage = setpointMessage3;
-      inputParam = _SETPOINT_INPUTS[2];
-    }
-    else if (request->hasParam(_SETPOINT_INPUTS[3])) {
-      // GET setpoint_input4 value on <ESP_IP>/get?setpoint_input4=<inputMessage>
-      setpointMessage4 = request->getParam(_SETPOINT_INPUTS[3])->value();
-      spund_arr[3].vols_setpoint = setpointMessage4.toFloat();
-      inputMessage = setpointMessage4;
-      inputParam = _SETPOINT_INPUTS[3];
-    }
-    else if (request->hasParam(_MQTT_INPUTS[0])) {
-      // GET mqtt_input1 values on <ESP_IP>/get?mqtt_input1=<inputMessage>
-      mqttMessage1 = request->getParam(_MQTT_INPUTS[0])->value();
-      spund_arr[0].mqtt_field = mqttMessage1;
-      inputMessage = mqttMessage1;
-      inputParam = _MQTT_INPUTS[0];
-    }
-    else if (request->hasParam(_MQTT_INPUTS[1])) {
-      // GET mqtt_input2 values on <ESP_IP>/get?mqtt_input2=<inputMessage>
-      mqttMessage2 = request->getParam(_MQTT_INPUTS[1])->value();
-      spund_arr[1].mqtt_field = mqttMessage2;
-      inputMessage = mqttMessage2;
-      inputParam = _MQTT_INPUTS[1];
-    }
-    else if (request->hasParam(_MQTT_INPUTS[2])) {
-      // GET mqtt_input3 values on <ESP_IP>/get?mqtt_input3=<inputMessage>
-      mqttMessage3 = request->getParam(_MQTT_INPUTS[2])->value();
-      spund_arr[2].mqtt_field = mqttMessage3;
-      inputMessage = mqttMessage3;
-      inputParam = _MQTT_INPUTS[2];
-    }
-    else if (request->hasParam(_MQTT_INPUTS[3])) {
-      // GET mqtt_input4 values on <ESP_IP>/get?mqtt_input4=<inputMessage>
-      mqttMessage4 = request->getParam(_MQTT_INPUTS[3])->value();
-      spund_arr[3].mqtt_field = mqttMessage4;
-      inputMessage = mqttMessage4;
-      inputParam = _MQTT_INPUTS[3];
     }
 
     request->send(200, "text/html", "HTTP GET request sent to your ESP on input field ("
@@ -165,7 +126,7 @@ void onConnectionEstablished()
     deserializeJson(input, payload);
     for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
     {
-    spund_arr[spunder].tempC = input["data"][spund_arr[spunder].mqtt_field]["value[degC]"];
+        spund_arr[spunder].tempC = input["data"][spund_arr[spunder].mqtt_field]["value[degC]"];
     }
     publishData(); });
 }
