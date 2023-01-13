@@ -12,11 +12,6 @@
 #include "Spunder/spunder_config.hpp"
 #include "Server/server.hpp"
 
-// AsyncWebServer server(80);
-// std::array<Spunder, _NUMBER_OF_SPUNDERS> spund_arr;
-// EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
-// StaticJsonDocument<4096> input;
-
 std::array<Spunder, _NUMBER_OF_SPUNDERS> spund_arr;
 StaticJsonDocument<4096> input;
 AsyncWebServer server(80);
