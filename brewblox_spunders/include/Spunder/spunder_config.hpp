@@ -32,19 +32,19 @@ std::array<const String, _NUMBER_OF_SPUNDERS>
     _SPUNDER_NAMES = {_NAME1, _NAME2, _NAME3, _NAME4};
 
 // Brewblox names of temps to request for each spunder mqtt_temp_field
-String _TEMP1 = "TEMP_blueBeer";
-String _TEMP2 = "TEMP_orangeBeer";
-String _TEMP3 = "TEMP_ambientRoom";
-String _TEMP4 = "TEMP_ambientRoom";
+#define _TEMP1 "TEMP_blueBeer"
+#define _TEMP2 "TEMP_orangeBeer"
+#define _TEMP3 "TEMP_ambientRoom"
+#define _TEMP4 "TEMP_ambientRoom"
 
 std::array<const String, _NUMBER_OF_SPUNDERS>
     _MQTT_FIELDS = {_TEMP1, _TEMP2, _TEMP3, _TEMP4};
 
 // Desired vols of CO2 for each spunder
-float _VOLS1 = 2.2;
-float _VOLS2 = 2.2;
-float _VOLS3 = 2.2;
-float _VOLS4 = 2.2;
+#define _VOLS1 2.20
+#define _VOLS2 2.20
+#define _VOLS3 2.20
+#define _VOLS4 2.20
 
 std::array<float, _NUMBER_OF_SPUNDERS>
     _DESIRED_VOLS = {_VOLS1, _VOLS2, _VOLS3, _VOLS4};
