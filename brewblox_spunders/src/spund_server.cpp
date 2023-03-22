@@ -116,7 +116,7 @@ void onConnectionEstablished()
 {
     client.subscribe(_SUBTOPIC, [](const String &payload)
                      {
-    Serial.println(payload);
+    // Serial.println(payload);
     deserializeJson(input, payload);
     for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
     {
@@ -127,23 +127,24 @@ void onConnectionEstablished()
 
 void publishData()
 {
-    if (client.isConnected())
+    StaticJsonDocument<768> message;
+    message["key"] = _CLIENTID;
+    
+    if (!client.isConnected()) {
+        ESP.restart();
+    }
+
+    for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
     {
-        StaticJsonDocument<768> message;
-        message["key"] = _CLIENTID;
-
-        for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
+        if (!spund_arr[spunder].tempC)
         {
-            if (!spund_arr[spunder].tempC)
-            {
-                Serial.println(" no temp reading");
-                continue;
-            }
-            else
-            {
-                spund_arr[spunder].spunder_run();
-            }
-
+            Serial.println(" no temp reading");
+            continue;
+        }
+        else
+        {
+            spund_arr[spunder].spunder_run();
+            
             message["data"][spund_arr[spunder].name]["volts"] = spund_arr[spunder].volts;
             message["data"][spund_arr[spunder].name]["tempC"] = spund_arr[spunder].tempC;
             message["data"][spund_arr[spunder].name]["psi_setpoint"] = spund_arr[spunder].psi_setpoint;
@@ -153,8 +154,9 @@ void publishData()
             message["data"][spund_arr[spunder].name]["since_vent"] = spund_arr[spunder].time_since_vent;
             message["data"][spund_arr[spunder].name]["vent_state"] = spund_arr[spunder].vent_state;
         }
-        serializeJsonPretty(message, Serial);
-        client.publish(_PUBTOPIC, message.as<String>());
-        delay(5000);
-    }
+    }    
+    serializeJsonPretty(message, Serial);
+    client.publish(_PUBTOPIC, message.as<String>());
+    delay(5000);
+    
 }

@@ -16,6 +16,7 @@
 
 // MQTT setup
 #define _MQTTHOST "192.168.1.2"
+// #define _MQTTHOST "10.0.0.102"
 #define _MQTTPORT 1883
 #define _CLIENTID "spunders"
 #define _SUBTOPIC "brewcast/history/spark-two"
