@@ -20,7 +20,7 @@ const char index_html[] PROGMEM = R"rawliteral(
             sepoint-1:
             <input
                 type="number"
-                step="0.1"
+                step="0.01"
                 name="setpoint_input1"
                 value="%SETPOINT1%"
                 required
@@ -32,7 +32,7 @@ const char index_html[] PROGMEM = R"rawliteral(
             sepoint-2:
             <input
                 type="number"
-                step="0.1"
+                step="0.01"
                 name="setpoint_input2"
                 value="%SETPOINT2%"
                 required
@@ -44,7 +44,7 @@ const char index_html[] PROGMEM = R"rawliteral(
             sepoint-3:
             <input
                 type="number"
-                step="0.1"
+                step="0.01"
                 name="setpoint_input3"
                 value="%SETPOINT3%"
                 required
@@ -56,7 +56,7 @@ const char index_html[] PROGMEM = R"rawliteral(
             sepoint-4:
             <input
                 type="number"
-                step="0.1"
+                step="0.01"
                 name="setpoint_input4"
                 value="%SETPOINT4%"
                 required
