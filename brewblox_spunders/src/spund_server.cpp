@@ -34,7 +34,7 @@ void setup()
     initWifi();
 
     // Spunder setup
-    for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
+    for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; ++spunder)
     {
         spund_arr[spunder].name = _SPUNDER_NAMES[spunder];
         spund_arr[spunder].mqtt_field = _MQTT_FIELDS[spunder];
@@ -58,7 +58,7 @@ void setup()
     String inputMessage;
     String inputParam;
 
-    for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
+    for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; ++spunder)
     {
         if (request->hasParam(_SETPOINT_INPUTS[spunder])) {
             _SETPOINT_MESSAGES[spunder] = request->getParam(_SETPOINT_INPUTS[spunder])->value();
@@ -84,10 +84,10 @@ void setup()
 
 void loop()
 {
-    if (WiFi.status() != WL_CONNECTED)
-    {
-        initWifi();
-    }
+    // if (WiFi.status() != WL_CONNECTED)
+    // {
+    //     initWifi();
+    // }
     client.loop();
 }
 
@@ -118,7 +118,7 @@ void onConnectionEstablished()
                      {
     // Serial.println(payload);
     deserializeJson(input, payload);
-    for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
+    for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; ++spunder)
     {
         spund_arr[spunder].tempC = input["data"][spund_arr[spunder].mqtt_field]["value[degC]"];
     }
@@ -129,12 +129,13 @@ void publishData()
 {
     StaticJsonDocument<768> message;
     message["key"] = _CLIENTID;
-    
-    if (!client.isConnected()) {
+
+    if (!client.isConnected())
+    {
         ESP.restart();
     }
 
-    for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; spunder++)
+    for (uint8_t spunder = 0; spunder < _NUMBER_OF_SPUNDERS; ++spunder)
     {
         if (!spund_arr[spunder].tempC)
         {
@@ -144,7 +145,7 @@ void publishData()
         else
         {
             spund_arr[spunder].spunder_run();
-            
+
             message["data"][spund_arr[spunder].name]["volts"] = spund_arr[spunder].volts;
             message["data"][spund_arr[spunder].name]["tempC"] = spund_arr[spunder].tempC;
             message["data"][spund_arr[spunder].name]["psi_setpoint"] = spund_arr[spunder].psi_setpoint;
@@ -154,9 +155,8 @@ void publishData()
             message["data"][spund_arr[spunder].name]["since_vent"] = spund_arr[spunder].time_since_vent;
             message["data"][spund_arr[spunder].name]["vent_state"] = spund_arr[spunder].vent_state;
         }
-    }    
+    }
     serializeJsonPretty(message, Serial);
     client.publish(_PUBTOPIC, message.as<String>());
     delay(5000);
-    
 }
